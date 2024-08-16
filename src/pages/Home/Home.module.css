@@ -1,3 +1,27 @@
 .container {
   width: 100%;
+  padding: 30px 0;
+}
+
+.logo_container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row;
+  gap: 30px;
+}
+
+.logo {
+  width: 255px;
+  height: 231px;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.subtitle {
+  font-size: 16px;
+  font-weight: 500;
 }

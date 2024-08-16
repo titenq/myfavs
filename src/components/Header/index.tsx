@@ -7,7 +7,7 @@ import {
 } from 'react-bootstrap';
 
 import styles from './Header.module.css';
-import logo from '../../assets/img/myfavs-128.png';
+import logo from '../../assets/img/myfavs.png';
 
 const Header = () => {
   return (
