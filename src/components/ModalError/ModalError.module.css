@@ -1,0 +1,15 @@
+.modal_title {
+  font-weight: bold;
+  text-align: center;
+  color: var(--background-color);
+}
+
+.modal_body {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  color: var(--white);
+  background-color: var(--background-color);
+}
