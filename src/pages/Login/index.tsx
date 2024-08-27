@@ -1,4 +1,5 @@
 import { ChangeEvent, FormEvent, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 import { Button, Container, FloatingLabel, Form, Image, InputGroup } from 'react-bootstrap';
 import { FaEye, FaEyeSlash } from 'react-icons/fa6';
@@ -97,6 +98,16 @@ const Login = () => {
               {passwordVisible ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
             </InputGroup.Text>
           </InputGroup>
+
+          <div className={styles.links_container}>
+            <Link to={'/esqueci-senha'} className={styles.link}>
+              esqueceu a senha?
+            </Link>
+
+            <Link to={'/cadastro'} className={styles.link}>
+              não tem uma conta? cadastre-se
+            </Link>
+          </div>
 
           <Button type='submit' className={styles.button}>enviar</Button>
         </Form>

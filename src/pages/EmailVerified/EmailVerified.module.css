@@ -23,7 +23,7 @@
 }
 
 .title a {
-  color: inherit;
+  color: var(--color);
   text-decoration: none;
 }
 

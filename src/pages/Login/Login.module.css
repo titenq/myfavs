@@ -70,10 +70,31 @@
   color: var(--nav-color);
   font-size: 18px;
   border: 1px solid transparent;
+  transition: all 0.3s ease-out;
 }
 
 .button:hover {
   background-color: var(--nav-color);
   color: var(--background-color);
   border: 1px solid var(--background-color);
+}
+
+.links_container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 10px;
+}
+
+.link {
+  color: var(--color);
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.3s ease-out;
+}
+
+.link:hover {
+  color: var(--background-color);
 }
