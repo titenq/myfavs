@@ -11,11 +11,20 @@ const Home = () => {
 
         <div>
           <p className={styles.title}>
-            Salve seus links em um só lugar!
+            salve seus links em um só lugar
           </p>
 
           <p className={styles.subtitle}>
-            Organize e acesse seus links favoritos facilmente. Crie uma conta para salvar e gerenciar seus links, escolhendo se deseja torná-los privados ou públicos. Mesmo sem se logar, qualquer pessoa pode explorar e visualizar os links públicos. Mantenha tudo ao seu alcance com apenas alguns cliques!
+            organize e acesse seus links favoritos facilmente
+          </p>
+          <p className={styles.subtitle}>
+            crie uma conta para salvar e gerenciar seus links, escolhendo se deseja torná-los privados ou públicos
+          </p>
+          <p className={styles.subtitle}>
+            mesmo sem se logar, qualquer pessoa pode explorar e visualizar os links públicos
+          </p>
+          <p className={styles.subtitle}>
+            mantenha tudo ao seu alcance com apenas alguns cliques
           </p>
         </div>
       </div>

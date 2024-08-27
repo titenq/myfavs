@@ -8,6 +8,7 @@ import ProtectedRoute from './protectedRoutes/ProtectedRoute';
 
 const Login = lazy(() => import('./pages/Login'));
 const Admin = lazy(() => import('./pages/Admin'));
+const EmailVerified = lazy(() => import('./pages/EmailVerified'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 
 const router = createBrowserRouter([
@@ -23,6 +24,14 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={<div>Carregando...</div>}>
             <Login />
+          </Suspense>
+        ) 
+      },
+      {
+        path: '/email-verificado',
+        element: (
+          <Suspense fallback={<div>Carregando...</div>}>
+            <EmailVerified />
           </Suspense>
         ) 
       },
