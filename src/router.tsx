@@ -7,6 +7,7 @@ import Home from './pages/Home';
 import ProtectedRoute from './protectedRoutes/ProtectedRoute';
 
 const Login = lazy(() => import('./pages/Login'));
+const Register = lazy(() => import('./pages/Register'));
 const Admin = lazy(() => import('./pages/Admin'));
 const EmailVerified = lazy(() => import('./pages/EmailVerified'));
 const NotFound = lazy(() => import('./pages/NotFound'));
@@ -28,7 +29,15 @@ const router = createBrowserRouter([
         ) 
       },
       {
-        path: '/email-verificado',
+        path: '/cadastro',
+        element: (
+          <Suspense fallback={<div>Carregando...</div>}>
+            <Register />
+          </Suspense>
+        ) 
+      },
+      {
+        path: '/verificar-email',
         element: (
           <Suspense fallback={<div>Carregando...</div>}>
             <EmailVerified />
