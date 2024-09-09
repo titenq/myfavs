@@ -1,15 +1,13 @@
-import { FC } from 'react';
+import { FC, useContext } from 'react';
 import { Navigate } from 'react-router-dom';
 
-import IProtectedRouteProps from '../interfaces/IProtectedRouteProps';
+import AuthContext from '../context/AuthContext';
+import { IProtectedRouteProps } from '../interfaces/protectedRouteInterface';
 
 const ProtectedRoute: FC<IProtectedRouteProps> = ({ children }) => {
-  const googleToken = localStorage.getItem('google_token');
-  const facebookToken = localStorage.getItem('facebook_token');
-  const githubToken = localStorage.getItem('github_token');
-  const xToken = localStorage.getItem('x_token');
+  const { isLoggedIn } = useContext(AuthContext);
 
-  if (!googleToken && !facebookToken && !githubToken && !xToken) {
+  if (!isLoggedIn) {
     return <Navigate to='/login' />;
   } 
   

@@ -5,10 +5,13 @@ import { Button, Container, FloatingLabel, Form, Image, InputGroup } from 'react
 import { FaEye, FaEyeSlash } from 'react-icons/fa6';
 
 import styles from './Login.module.css';
-import ILogin from '../../interfaces/Login/ILogin';
+import { ILoginData } from '../../interfaces/loginInterface';
 import { emailValidator, passwordValidator } from '../../helpers/validators';
 import ModalError from '../../components/ModalError';
 import logo from '../../assets/img/myfavs.png';
+import login from '../../api/auth/login';
+import { IUser } from '../../interfaces/userInterface';
+import { IGenericError } from '../../interfaces/errorInterface';
 
 const Login = () => {
   const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
@@ -17,12 +20,12 @@ const Login = () => {
 
   const handleModalErrorClose = () => setShowModalError(false);
 
-  const initialValues: ILogin = {
+  const initialValues: ILoginData = {
     email: '',
     password: ''
   };
 
-  const [values, setValues] = useState<ILogin>(initialValues);
+  const [values, setValues] = useState<ILoginData>(initialValues);
 
   const setValue = (key: string, value: string) => {
     setValues({
@@ -39,7 +42,7 @@ const Login = () => {
     setValue(event.target.getAttribute('name') || '', event.target.value);
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!emailValidator(values.email)) {
@@ -58,7 +61,16 @@ const Login = () => {
       return;
     }
 
-    console.log(values);
+    const response: IUser | IGenericError = await login(values);
+
+    console.log(response);
+
+    if ('error' in response) {
+      setErrorMessage(response.message);
+      setShowModalError(true);
+
+      return;
+    }
   };
 
   return (

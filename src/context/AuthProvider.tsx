@@ -1,8 +1,8 @@
 import { useState, FC } from 'react';
 
 import AuthContext from './AuthContext';
-import IUser from '../interfaces/User/IUser';
-import IAuthProviderProps from '../interfaces/Auth/IAuthProviderProps';
+import { IUser } from '../interfaces/userInterface';
+import { IAuthProviderProps } from '../interfaces/authInterface';
 
 const AuthProvider: FC<IAuthProviderProps> = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);

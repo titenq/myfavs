@@ -1,14 +1,14 @@
 import { Button, Modal } from 'react-bootstrap';
 
 import styles from './ModalError.module.css';
-import { IPropsModalError } from '../../interfaces/Error/IPropsModalError';
+import { IPropsModalError } from '../../interfaces/errorInterface';
 
 const ModalError = (props: IPropsModalError) => {
   return (
     <Modal show={props.showModalError} onHide={props.handleModalErrorClose} size='sm' centered>
       <Modal.Header closeButton>
         <Modal.Title className={styles.modal_title}>
-          Atenção
+          erro
         </Modal.Title>
       </Modal.Header>
       <Modal.Body className={styles.modal_body}>
@@ -16,7 +16,7 @@ const ModalError = (props: IPropsModalError) => {
       </Modal.Body>
       <Modal.Footer>
         <Button variant='outline-secondary' className={styles.btn} onClick={props.handleModalErrorClose}>
-          Fechar
+          fechar
         </Button>
       </Modal.Footer>
     </Modal>

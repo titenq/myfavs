@@ -4,7 +4,7 @@ import { Button, Container, FloatingLabel, Form, Image, InputGroup } from 'react
 import { FaEye, FaEyeSlash } from 'react-icons/fa6';
 
 import styles from './Register.module.css';
-import ILogin from '../../interfaces/Login/ILogin';
+import { ILoginData } from '../../interfaces/loginInterface';
 import { emailValidator, passwordValidator } from '../../helpers/validators';
 import ModalError from '../../components/ModalError';
 import logo from '../../assets/img/myfavs.png';
@@ -16,12 +16,12 @@ const Register = () => {
 
   const handleModalErrorClose = () => setShowModalError(false);
 
-  const initialValues: ILogin = {
+  const initialValues: ILoginData = {
     email: '',
     password: ''
   };
 
-  const [values, setValues] = useState<ILogin>(initialValues);
+  const [values, setValues] = useState<ILoginData>(initialValues);
 
   const setValue = (key: string, value: string) => {
     setValues({
