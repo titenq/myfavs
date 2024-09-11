@@ -3,14 +3,47 @@ import { useState, FC } from 'react';
 import AuthContext from './AuthContext';
 import { IUser } from '../interfaces/userInterface';
 import { IAuthProviderProps } from '../interfaces/authInterface';
+import { ILoginData } from '../interfaces/loginInterface';
+import login from '../api/auth/login';
 
 const AuthProvider: FC<IAuthProviderProps> = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [user, setUser] = useState<IUser | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const login = (user: IUser) => {
+  /* const login = (user: IUser) => {
     setIsLoggedIn(true);
     setUser(user);
+  }; */
+
+  const authenticate = async (loginData: ILoginData ) => {
+    try {
+      setError(null);
+      setLoading(true);
+
+      const response = await login(loginData);
+
+      if ('error' in response) {
+        setError(response.message);
+        
+        return;
+      }
+
+      if (response) {
+        setUser(response);
+        setIsLoggedIn(true);
+      }
+
+      return response;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (error) {
+      setError('erro ao fazer login');
+      setUser(null);
+      setIsLoggedIn(false);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const logout = () => {
@@ -24,10 +57,12 @@ const AuthProvider: FC<IAuthProviderProps> = ({ children }) => {
     <AuthContext.Provider
       value={
         {
+          authenticate,
           isLoggedIn,
           user,
-          login,
           logout,
+          error,
+          loading
         }
       }
     >

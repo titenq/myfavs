@@ -1,5 +1,5 @@
-import { ChangeEvent, FormEvent, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { ChangeEvent, FormEvent, useContext, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { Button, Container, FloatingLabel, Form, Image, InputGroup } from 'react-bootstrap';
 import { FaEye, FaEyeSlash } from 'react-icons/fa6';
@@ -9,11 +9,16 @@ import { ILoginData } from '../../interfaces/loginInterface';
 import { emailValidator, passwordValidator } from '../../helpers/validators';
 import ModalError from '../../components/ModalError';
 import logo from '../../assets/img/myfavs.png';
-import login from '../../api/auth/login';
-import { IUser } from '../../interfaces/userInterface';
-import { IGenericError } from '../../interfaces/errorInterface';
+import AuthContext from '../../context/AuthContext';
 
 const Login = () => {
+  const {
+    authenticate,
+    error,
+    isLoggedIn,
+    loading
+  } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
   const [showModalError, setShowModalError] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
@@ -61,15 +66,17 @@ const Login = () => {
       return;
     }
 
-    const response: IUser | IGenericError = await login(values);
+    authenticate(values);
 
-    console.log(response);
-
-    if ('error' in response) {
-      setErrorMessage(response.message);
+    if (error) {
+      setErrorMessage(error);
       setShowModalError(true);
 
       return;
+    }
+
+    if (isLoggedIn) {
+      navigate('/admin');
     }
   };
 
@@ -121,7 +128,13 @@ const Login = () => {
             </Link>
           </div>
 
-          <Button type='submit' className={styles.button}>enviar</Button>
+          {loading && (
+            <Button type='submit' className={styles.button} disabled>enviando...</Button>
+          )}
+
+          {!loading && (
+            <Button type='submit' className={styles.button}>enviar</Button>
+          )}
         </Form>
       </div>
 

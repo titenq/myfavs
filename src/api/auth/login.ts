@@ -7,6 +7,7 @@ const login = async (loginData: ILoginData): Promise<IUser | IGenericError> => {
   try {
     const response = await fetch(`${backendBaseUrl}/auth/login`, {
       method: 'POST',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json; charset=utf-8'
       },
