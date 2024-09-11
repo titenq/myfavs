@@ -4,12 +4,12 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Button, Container, FloatingLabel, Form, Image, InputGroup } from 'react-bootstrap';
 import { FaEye, FaEyeSlash } from 'react-icons/fa6';
 
-import styles from './Login.module.css';
-import { ILoginData } from '../../interfaces/loginInterface';
-import { emailValidator, passwordValidator } from '../../helpers/validators';
-import ModalError from '../../components/ModalError';
-import logo from '../../assets/img/myfavs.png';
-import AuthContext from '../../context/AuthContext';
+import styles from '@/pages/Login/Login.module.css';
+import { ILoginData } from '@/interfaces/loginInterface';
+import { emailValidator, passwordValidator } from '@/helpers/validators';
+import ModalError from '@/components/ModalError';
+import logo from '@/assets/img/myfavs.png';
+import AuthContext from '@/context/AuthContext';
 
 const Login = () => {
   const {
@@ -44,14 +44,28 @@ const Login = () => {
   };
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setValue(event.target.getAttribute('name') || '', event.target.value);
+    setValue(event.target.getAttribute('name')!, event.target.value);
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
+    if (!values.email) {
+      setErrorMessage('e-mail não informado');
+      setShowModalError(true);
+
+      return;
+    }
+
     if (!emailValidator(values.email)) {
       setErrorMessage('e-mail com formato inválido');
+      setShowModalError(true);
+
+      return;
+    }
+
+    if (!values.password) {
+      setErrorMessage('senha não informada');
       setShowModalError(true);
 
       return;

@@ -3,11 +3,11 @@ import { ChangeEvent, FormEvent, useState } from 'react';
 import { Button, Container, FloatingLabel, Form, Image, InputGroup } from 'react-bootstrap';
 import { FaEye, FaEyeSlash } from 'react-icons/fa6';
 
-import styles from './Register.module.css';
-import { ILoginData } from '../../interfaces/loginInterface';
-import { emailValidator, passwordValidator } from '../../helpers/validators';
-import ModalError from '../../components/ModalError';
-import logo from '../../assets/img/myfavs.png';
+import styles from '@/pages/Register/Register.module.css';
+import { emailValidator, passwordValidator } from '@/helpers/validators';
+import ModalError from '@/components/ModalError';
+import logo from '@/assets/img/myfavs.png';
+import { IRegisterData } from '@/interfaces/registerInterface';
 
 const Register = () => {
   const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
@@ -16,12 +16,14 @@ const Register = () => {
 
   const handleModalErrorClose = () => setShowModalError(false);
 
-  const initialValues: ILoginData = {
+  const initialValues: IRegisterData = {
+    username: '',
     email: '',
-    password: ''
+    password: '',
+    confirmPassword: ''
   };
 
-  const [values, setValues] = useState<ILoginData>(initialValues);
+  const [values, setValues] = useState<IRegisterData>(initialValues);
 
   const setValue = (key: string, value: string) => {
     setValues({
@@ -41,8 +43,29 @@ const Register = () => {
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
+    if (!values.username) {
+      setErrorMessage('nome de usuário não informado');
+      setShowModalError(true);
+
+      return;
+    }
+
+    if (!values.email) {
+      setErrorMessage('e-mail não informado');
+      setShowModalError(true);
+
+      return;
+    }
+
     if (!emailValidator(values.email)) {
       setErrorMessage('e-mail com formato inválido');
+      setShowModalError(true);
+
+      return;
+    }
+
+    if (!values.password) {
+      setErrorMessage('senha não informada');
       setShowModalError(true);
 
       return;
@@ -52,6 +75,13 @@ const Register = () => {
 
     if (isPasswordValid.error) {
       setErrorMessage(isPasswordValid.message);
+      setShowModalError(true);
+
+      return;
+    }
+
+    if (values.confirmPassword !== values.password) {
+      setErrorMessage('senhas não conferem');
       setShowModalError(true);
 
       return;
@@ -70,13 +100,13 @@ const Register = () => {
 
         <Form onSubmit={handleSubmit} noValidate className={styles.input_container}>
           <FloatingLabel
-            controlId='name'
+            controlId='username'
             label='nome de usuário'
             className={styles.input}
           >
             <Form.Control
               type='text'
-              name='name'
+              name='username'
               placeholder='nome de usuário'
               className={styles.control}
               onChange={handleChange}
@@ -113,10 +143,10 @@ const Register = () => {
           </InputGroup>
 
           <InputGroup className={styles.input}>
-            <FloatingLabel controlId='confirm-password' label='confirmar senha'>
+            <FloatingLabel controlId='confirmPassword' label='confirmar senha'>
               <Form.Control
                 type={passwordVisible ? 'text' : 'password'}
-                name='confirm-password'
+                name='confirmPassword'
                 placeholder='confirmar senha'
                 className={styles.control}
                 onChange={handleChange}

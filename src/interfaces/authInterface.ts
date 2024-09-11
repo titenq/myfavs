@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 
-import { IUser } from './userInterface';
-import { ILoginData } from './loginInterface';
+import { IUser } from '@/interfaces/userInterface';
+import { ILoginData } from '@/interfaces/loginInterface';
 
 export interface IAuthProviderProps {
   children: ReactNode;
@@ -10,7 +10,7 @@ export interface IAuthProviderProps {
 export interface IAuthContext {
   isLoggedIn: boolean;
   user: IUser | null;
-  authenticate: (loginData: ILoginData) => void;
+  authenticate: (loginData: ILoginData) => Promise<void>;
   logout: () => void;
   error: string | null;
   loading: boolean;

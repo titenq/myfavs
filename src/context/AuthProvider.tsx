@@ -1,10 +1,10 @@
 import { useState, FC } from 'react';
 
-import AuthContext from './AuthContext';
-import { IUser } from '../interfaces/userInterface';
-import { IAuthProviderProps } from '../interfaces/authInterface';
-import { ILoginData } from '../interfaces/loginInterface';
-import login from '../api/auth/login';
+import AuthContext from '@/context/AuthContext';
+import { IUser } from '@/interfaces/userInterface';
+import { IAuthProviderProps } from '@/interfaces/authInterface';
+import { ILoginData } from '@/interfaces/loginInterface';
+import login from '@/api/auth/login';
 
 const AuthProvider: FC<IAuthProviderProps> = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
@@ -12,12 +12,7 @@ const AuthProvider: FC<IAuthProviderProps> = ({ children }) => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
-  /* const login = (user: IUser) => {
-    setIsLoggedIn(true);
-    setUser(user);
-  }; */
-
-  const authenticate = async (loginData: ILoginData ) => {
+  const authenticate = async (loginData: ILoginData): Promise<void> => {
     try {
       setError(null);
       setLoading(true);
@@ -35,7 +30,7 @@ const AuthProvider: FC<IAuthProviderProps> = ({ children }) => {
         setIsLoggedIn(true);
       }
 
-      return response;
+      return;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       setError('erro ao fazer login');

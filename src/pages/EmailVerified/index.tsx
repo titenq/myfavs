@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom';
 import { Container, Image } from 'react-bootstrap';
 
-import styles from './EmailVerified.module.css';
-import logo from '../../assets/img/myfavs.png';
+import styles from '@/pages/EmailVerified/EmailVerified.module.css';
+import logo from '@/assets/img/myfavs.png';
 
 const EmailVerified = () => {
   return (

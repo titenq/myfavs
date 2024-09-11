@@ -2,15 +2,15 @@
 import { lazy, Suspense } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
 
-import Layout from './components/Layout';
-import Home from './pages/Home';
-import ProtectedRoute from './protectedRoutes/ProtectedRoute';
+import Layout from '@/components/Layout';
+import Home from '@/pages/Home';
+import ProtectedRoute from '@/protectedRoutes/ProtectedRoute';
 
-const Login = lazy(() => import('./pages/Login'));
-const Register = lazy(() => import('./pages/Register'));
-const Admin = lazy(() => import('./pages/Admin'));
-const EmailVerified = lazy(() => import('./pages/EmailVerified'));
-const NotFound = lazy(() => import('./pages/NotFound'));
+const Login = lazy(() => import('@/pages/Login'));
+const Register = lazy(() => import('@/pages/Register'));
+const Admin = lazy(() => import('@/pages/Admin'));
+const EmailVerified = lazy(() => import('@/pages/EmailVerified'));
+const NotFound = lazy(() => import('@/pages/NotFound'));
 
 const router = createBrowserRouter([
   {

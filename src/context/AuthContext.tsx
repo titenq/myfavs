@@ -1,11 +1,14 @@
 import { createContext } from 'react';
-import { IAuthContext } from '../interfaces/authInterface';
+
+import { IAuthContext } from '@/interfaces/authInterface';
 
 const defaultAuthContext: IAuthContext = {
   isLoggedIn: false,
   user: null,
-  login: () => { },
-  logout: () => { }
+  authenticate: async () => { },
+  logout: () => { },
+  error: null,
+  loading: false
 };
 
 const AuthContext = createContext<IAuthContext>(defaultAuthContext);

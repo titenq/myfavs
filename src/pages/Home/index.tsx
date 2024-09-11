@@ -1,7 +1,7 @@
 import { Container, Image } from 'react-bootstrap';
 
-import styles from './Home.module.css';
-import logo from '../../assets/img/myfavs.png';
+import styles from '@/pages/Home/Home.module.css';
+import logo from '@/assets/img/myfavs.png';
 
 const Home = () => {
   return (

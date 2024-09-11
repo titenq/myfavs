@@ -6,8 +6,8 @@ import {
   Offcanvas
 } from 'react-bootstrap';
 
-import styles from './Header.module.css';
-import logo from '../../assets/img/myfavs.png';
+import styles from '@/components/Header/Header.module.css';
+import logo from '@/assets/img/myfavs.png';
 
 const Header = () => {
   return (

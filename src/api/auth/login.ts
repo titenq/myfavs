@@ -1,7 +1,7 @@
-import { backendBaseUrl } from '../../helpers/baseUrl';
-import { IGenericError } from '../../interfaces/errorInterface';
-import { ILoginData } from '../../interfaces/loginInterface';
-import { IUser } from '../../interfaces/userInterface';
+import { backendBaseUrl } from '@/helpers/baseUrl';
+import { IGenericError } from '@/interfaces/errorInterface';
+import { ILoginData } from '@/interfaces/loginInterface';
+import { IUser } from '@/interfaces/userInterface';
 
 const login = async (loginData: ILoginData): Promise<IUser | IGenericError> => {
   try {
