@@ -58,7 +58,8 @@ const Login = () => {
     if (isLoggedIn) {
       navigate('/admin');
     }
-  }, [error, isLoggedIn, navigate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
