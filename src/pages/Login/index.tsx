@@ -1,4 +1,4 @@
-import { ChangeEvent, FormEvent, useContext, useState } from 'react';
+import { ChangeEvent, FormEvent, useContext, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { Button, Container, FloatingLabel, Form, Image, InputGroup } from 'react-bootstrap';
@@ -47,6 +47,19 @@ const Login = () => {
     setValue(event.target.getAttribute('name')!, event.target.value);
   };
 
+  useEffect(() => {
+    if (error) {
+      setErrorMessage(error);
+      setShowModalError(true);
+
+      return;
+    }
+
+    if (isLoggedIn) {
+      navigate('/admin');
+    }
+  }, [error, isLoggedIn, navigate]);
+
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -80,18 +93,7 @@ const Login = () => {
       return;
     }
 
-    authenticate(values);
-
-    if (error) {
-      setErrorMessage(error);
-      setShowModalError(true);
-
-      return;
-    }
-
-    if (isLoggedIn) {
-      navigate('/admin');
-    }
+    await authenticate(values);
   };
 
   return (
