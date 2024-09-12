@@ -20,3 +20,7 @@ export interface IVerifyEmailData {
   email: string;
   token: string;
 }
+
+export interface ILogoutResponse {
+  message: string;
+}

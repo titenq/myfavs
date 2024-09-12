@@ -2,9 +2,11 @@ import { useState, FC } from 'react';
 
 import AuthContext from '@/context/AuthContext';
 import { IUser } from '@/interfaces/userInterface';
-import { IAuthProviderProps } from '@/interfaces/authInterface';
+import { IAuthProviderProps, ILogoutResponse } from '@/interfaces/authInterface';
 import { ILoginData } from '@/interfaces/loginInterface';
 import login from '@/api/auth/login';
+import authLogout from '@/api/auth/authLogout';
+import { IGenericError } from '@/interfaces/errorInterface';
 
 const AuthProvider: FC<IAuthProviderProps> = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
@@ -41,8 +43,12 @@ const AuthProvider: FC<IAuthProviderProps> = ({ children }) => {
     }
   };
 
-  const logout = () => {
-    localStorage.clear();
+  const logout = async () => {
+    const response: ILogoutResponse | IGenericError = await authLogout();
+
+    if ('error' in response) {
+      setError(response.message);
+    }
 
     setIsLoggedIn(false);
     setUser(null);

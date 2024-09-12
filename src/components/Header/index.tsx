@@ -8,8 +8,24 @@ import {
 
 import styles from '@/components/Header/Header.module.css';
 import logo from '@/assets/img/myfavs.png';
+import { useContext, useEffect, useState } from 'react';
+import AuthContext from '@/context/AuthContext';
+import ModalError from '../ModalError';
 
 const Header = () => {
+  const { isLoggedIn, logout, error } = useContext(AuthContext);
+  const [errorMessage, setErrorMessage] = useState<string>('');
+  const [showModalError, setShowModalError] = useState<boolean>(false);
+
+  const handleModalErrorClose = () => setShowModalError(false);
+
+  useEffect(() => {
+    if (error) {
+      setErrorMessage(error);
+      setShowModalError(true);
+    }
+  }, [error]);
+
   return (
     <Navbar
       sticky='top'
@@ -41,12 +57,27 @@ const Header = () => {
             </Offcanvas.Title>
           </Offcanvas.Header>
           <Offcanvas.Body>
-            <Nav className='justify-content-end flex-grow-1 pe-3'>
-              <Nav.Link href='/login' className={styles.link}>login</Nav.Link>
-            </Nav>
+            {!isLoggedIn && (
+              <Nav className='justify-content-end flex-grow-1 pe-3'>
+                <Nav.Link href='/login' className={styles.link}>login</Nav.Link>
+              </Nav>
+            )}
+
+            {isLoggedIn && (
+              <Nav className='justify-content-end flex-grow-1 pe-3'>
+                <Nav.Link className={styles.link} onClick={logout}>logout</Nav.Link>
+              </Nav>
+            )}
+
           </Offcanvas.Body>
         </Navbar.Offcanvas>
       </Container>
+
+      <ModalError
+        showModalError={showModalError}
+        handleModalErrorClose={handleModalErrorClose}
+        errorMessage={errorMessage}
+      />
     </Navbar>
   );
 };
