@@ -1,4 +1,5 @@
 import { ChangeEvent, FormEvent, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { Button, Container, FloatingLabel, Form, Image, InputGroup } from 'react-bootstrap';
 import { FaEye, FaEyeSlash } from 'react-icons/fa6';
@@ -7,23 +8,27 @@ import styles from '@/pages/Register/Register.module.css';
 import { emailValidator, passwordValidator } from '@/helpers/validators';
 import ModalError from '@/components/ModalError';
 import logo from '@/assets/img/myfavs.png';
-import { IRegisterData } from '@/interfaces/registerInterface';
+import { IRegister, IRegisterData } from '@/interfaces/registerInterface';
+import register from '@/api/auth/register';
+import { IUser } from '@/interfaces/userInterface';
+import { IGenericError } from '@/interfaces/errorInterface';
 
 const Register = () => {
+  const navigate = useNavigate();
   const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
   const [showModalError, setShowModalError] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
 
   const handleModalErrorClose = () => setShowModalError(false);
 
-  const initialValues: IRegisterData = {
-    username: '',
+  const initialValues: IRegister = {
+    name: '',
     email: '',
     password: '',
     confirmPassword: ''
   };
 
-  const [values, setValues] = useState<IRegisterData>(initialValues);
+  const [values, setValues] = useState<IRegister>(initialValues);
 
   const setValue = (key: string, value: string) => {
     setValues({
@@ -40,10 +45,10 @@ const Register = () => {
     setValue(event.target.getAttribute('name') || '', event.target.value);
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (!values.username) {
+    if (!values.name) {
       setErrorMessage('nome de usuário não informado');
       setShowModalError(true);
 
@@ -87,7 +92,22 @@ const Register = () => {
       return;
     }
 
-    console.log(values);
+    const data: IRegisterData = {
+      name: values.name,
+      email: values.email,
+      password: values.password
+    };
+
+    const response: IUser | IGenericError = await register(data);
+
+    if ('error' in response) {
+      setErrorMessage(response.message);
+      setShowModalError(true);
+
+      return;
+    }
+
+    navigate('/cadastro-sucesso');
   };
 
   return (
@@ -100,13 +120,13 @@ const Register = () => {
 
         <Form onSubmit={handleSubmit} noValidate className={styles.input_container}>
           <FloatingLabel
-            controlId='username'
+            controlId='name'
             label='nome de usuário'
             className={styles.input}
           >
             <Form.Control
               type='text'
-              name='username'
+              name='name'
               placeholder='nome de usuário'
               className={styles.control}
               onChange={handleChange}

@@ -15,3 +15,8 @@ export interface IAuthContext {
   error: string | null;
   loading: boolean;
 }
+
+export interface IVerifyEmailData {
+  email: string;
+  token: string;
+}

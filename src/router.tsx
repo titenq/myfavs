@@ -10,6 +10,8 @@ const Login = lazy(() => import('@/pages/Login'));
 const Register = lazy(() => import('@/pages/Register'));
 const Admin = lazy(() => import('@/pages/Admin'));
 const EmailVerified = lazy(() => import('@/pages/EmailVerified'));
+const EmailVerifiedOk = lazy(() => import('@/pages/EmailVerifiedOk'));
+const RegisteredSuccessfully = lazy(() => import('@/pages/RegisteredSuccessfully'));
 const NotFound = lazy(() => import('@/pages/NotFound'));
 
 const router = createBrowserRouter([
@@ -41,6 +43,22 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={<div>Carregando...</div>}>
             <EmailVerified />
+          </Suspense>
+        ) 
+      },
+      {
+        path: '/verificar-email-ok',
+        element: (
+          <Suspense fallback={<div>Carregando...</div>}>
+            <EmailVerifiedOk />
+          </Suspense>
+        ) 
+      },
+      {
+        path: '/cadastro-sucesso',
+        element: (
+          <Suspense fallback={<div>Carregando...</div>}>
+            <RegisteredSuccessfully />
           </Suspense>
         ) 
       },
