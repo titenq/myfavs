@@ -1,4 +1,5 @@
 import { ChangeEvent, FormEvent, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { Button, Container, FloatingLabel, Form, Image } from 'react-bootstrap';
 
@@ -6,8 +7,12 @@ import styles from '@/pages/ResendLink/ResendLink.module.css';
 import { emailValidator } from '@/helpers/validators';
 import ModalError from '@/components/ModalError';
 import logo from '@/assets/img/myfavs.png';
+import resendLink from '@/api/auth/resendLink';
+import { IResendLinkResponse } from '@/interfaces/authInterface';
+import { IGenericError } from '@/interfaces/errorInterface';
 
 const ResendLink = () => {
+  const navigate = useNavigate();
   const [showModalError, setShowModalError] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
@@ -28,6 +33,7 @@ const ResendLink = () => {
     if (!email) {
       setErrorMessage('e-mail não informado');
       setShowModalError(true);
+      setLoading(false);
 
       return;
     }
@@ -35,13 +41,24 @@ const ResendLink = () => {
     if (!emailValidator(email)) {
       setErrorMessage('e-mail com formato inválido');
       setShowModalError(true);
+      setLoading(false);
 
       return;
     }
 
-    console.log(email);
+    const response: IResendLinkResponse | IGenericError = await resendLink({ email });
+
+    if ('error' in response) {
+      setErrorMessage(response.message);
+      setShowModalError(true);
+      setLoading(false);
+
+      return;
+    }
 
     setLoading(false);
+
+    navigate('/cadastro-sucesso');
   };
 
   return (

@@ -23,3 +23,11 @@ export interface IVerifyEmailData {
 export interface ILogoutResponse {
   message: string;
 }
+
+export interface IResendLink {
+  email: string;
+}
+
+export interface IResendLinkResponse {
+  message: string;
+}
