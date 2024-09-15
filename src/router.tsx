@@ -12,6 +12,7 @@ const Admin = lazy(() => import('@/pages/Admin'));
 const EmailVerified = lazy(() => import('@/pages/EmailVerified'));
 const EmailVerifiedOk = lazy(() => import('@/pages/EmailVerifiedOk'));
 const RegisteredSuccessfully = lazy(() => import('@/pages/RegisteredSuccessfully'));
+const ResendLink = lazy(() => import('@/pages/ResendLink'));
 const NotFound = lazy(() => import('@/pages/NotFound'));
 
 const router = createBrowserRouter([
@@ -59,6 +60,14 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={<div>Carregando...</div>}>
             <RegisteredSuccessfully />
+          </Suspense>
+        ) 
+      },
+      {
+        path: '/reenviar-link',
+        element: (
+          <Suspense fallback={<div>Carregando...</div>}>
+            <ResendLink />
           </Suspense>
         ) 
       },

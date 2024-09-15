@@ -13,6 +13,10 @@ const ModalError = (props: IPropsModalError) => {
       </Modal.Header>
       <Modal.Body className={styles.modal_body}>
         {props.errorMessage}
+
+        {props.errorMessage === 'token expirado' && (
+          <a href="/reenviar-link" className={styles.resend_link}>reenviar link</a>
+        )}
       </Modal.Body>
       <Modal.Footer>
         <Button variant='outline-secondary' className={styles.btn} onClick={props.handleModalErrorClose}>

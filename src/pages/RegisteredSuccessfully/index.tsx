@@ -13,7 +13,13 @@ const RegisteredSuccessfully = () => {
             cadastro realizado com sucesso!
           </p>
           <p className={styles.title}>
-            enviamos um e-mail de confirmação para você, clique no link para concluir seu cadastro
+            enviamos um e-mail de confirmação para você
+          </p>
+          <p className={styles.title}>
+            clique no link para concluir seu cadastro
+          </p>
+          <p className={styles.title}>
+            link válido por 24 horas
           </p>
         </div>
       </div>

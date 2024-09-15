@@ -16,15 +16,18 @@ const EmailVerified = () => {
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [showModalError, setShowModalError] = useState<boolean>(false);
 
-  const handleModalErrorClose = () => setShowModalError(false);
+  const handleModalErrorClose = () => {
+    setShowModalError(false);
+    
+    navigate('/');
+  };
 
   useEffect(() => {
-    const email = searchParams.get('email');
     const token = searchParams.get('token');
 
-    if (email && token) {
+    if (token) {
       const fetchVerifyEmail = async () => {
-        const response: IEmailVerifiedResponse | IGenericError = await verifyEmail({ email, token });
+        const response: IEmailVerifiedResponse | IGenericError = await verifyEmail({ token });
 
         if ('error' in response) {
           setErrorMessage(response.message);

@@ -17,7 +17,6 @@ export interface IAuthContext {
 }
 
 export interface IVerifyEmailData {
-  email: string;
   token: string;
 }
 
