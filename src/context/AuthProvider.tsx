@@ -1,5 +1,7 @@
 import { useState, FC } from 'react';
 
+import Cookies from 'js-cookie';
+
 import AuthContext from '@/context/AuthContext';
 import { IUser } from '@/interfaces/userInterface';
 import { IAuthProviderProps, ILogoutResponse } from '@/interfaces/authInterface';
@@ -9,10 +11,20 @@ import authLogout from '@/api/auth/authLogout';
 import { IGenericError } from '@/interfaces/errorInterface';
 
 const AuthProvider: FC<IAuthProviderProps> = ({ children }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-  const [user, setUser] = useState<IUser | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(() => {
+    const storedUser = Cookies.get('user');
+
+    return storedUser ? true : false;
+  });
+
+  const [user, setUser] = useState<IUser | null>(() => {
+    const storedUser = Cookies.get('user');
+
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
 
   const authenticate = async (loginData: ILoginData): Promise<void> => {
     try {
@@ -30,6 +42,12 @@ const AuthProvider: FC<IAuthProviderProps> = ({ children }) => {
       if (response) {
         setUser(response);
         setIsLoggedIn(true);
+
+        Cookies.set('user', JSON.stringify(response), {
+          expires: 1,
+          secure: true,
+          sameSite: 'Lax'
+        });
       }
 
       return;
@@ -52,6 +70,8 @@ const AuthProvider: FC<IAuthProviderProps> = ({ children }) => {
 
     setIsLoggedIn(false);
     setUser(null);
+
+    Cookies.remove('user');
   };
 
   return (

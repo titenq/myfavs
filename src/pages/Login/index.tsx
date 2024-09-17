@@ -15,7 +15,6 @@ const Login = () => {
   const {
     authenticate,
     error,
-    isLoggedIn,
     loading
   } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -89,9 +88,7 @@ const Login = () => {
       return;
     }
 
-    if (isLoggedIn) {
-      navigate('/admin');
-    }
+    navigate('/admin');
   };
 
   return (
