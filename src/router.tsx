@@ -13,6 +13,10 @@ const EmailVerified = lazy(() => import('@/pages/EmailVerified'));
 const EmailVerifiedOk = lazy(() => import('@/pages/EmailVerifiedOk'));
 const RegisteredSuccessfully = lazy(() => import('@/pages/RegisteredSuccessfully'));
 const ResendLink = lazy(() => import('@/pages/ResendLink'));
+const ForgotPassword = lazy(() => import('@/pages/ForgotPassword'));
+const ForgotPasswordOk = lazy(() => import('@/pages/ForgotPasswordOk'));
+const ResetPassword = lazy(() => import('@/pages/ResetPassword'));
+const ResetPasswordOk = lazy(() => import('@/pages/ResetPasswordOk'));
 const NotFound = lazy(() => import('@/pages/NotFound'));
 
 const router = createBrowserRouter([
@@ -62,6 +66,38 @@ const router = createBrowserRouter([
             <RegisteredSuccessfully />
           </Suspense>
         ) 
+      },
+      {
+        path: '/esqueci-senha',
+        element: (
+          <Suspense fallback={<div>Carregando...</div>}>
+            <ForgotPassword />
+          </Suspense>
+        ) 
+      },
+      {
+        path: '/esqueci-senha-ok',
+        element: (
+          <Suspense fallback={<div>Carregando...</div>}>
+            <ForgotPasswordOk />
+          </Suspense>
+        ) 
+      },
+      {
+        path: '/recadastrar-senha',
+        element: (
+          <Suspense fallback={<div>Carregando...</div>}>
+            <ResetPassword />
+          </Suspense>
+        )
+      },
+      {
+        path: '/recadastrar-senha-ok',
+        element: (
+          <Suspense fallback={<div>Carregando...</div>}>
+            <ResetPasswordOk />
+          </Suspense>
+        )
       },
       {
         path: '/reenviar-link',

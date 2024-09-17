@@ -31,3 +31,13 @@ export interface IResendLink {
 export interface IResendLinkResponse {
   message: string;
 }
+
+export interface IResetPassword {
+  password: string;
+  confirmPassword: string;
+}
+
+export interface IResetPasswordData {
+  token: string;
+  password: string;
+}
