@@ -10,7 +10,7 @@ import styles from '@/components/Header/Header.module.css';
 import logo from '@/assets/img/myfavs.png';
 import { useContext, useEffect, useState } from 'react';
 import AuthContext from '@/context/AuthContext';
-import ModalError from '../ModalError';
+import ModalError from '@/components/ModalError';
 
 const Header = () => {
   const { isLoggedIn, logout, error } = useContext(AuthContext);
