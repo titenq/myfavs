@@ -46,3 +46,9 @@
 .navbar-dark {
   --bs-navbar-toggler-border-color: none;
 }
+
+.links_container {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+}

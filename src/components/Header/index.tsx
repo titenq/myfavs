@@ -56,7 +56,7 @@ const Header = () => {
               menu
             </Offcanvas.Title>
           </Offcanvas.Header>
-          <Offcanvas.Body>
+          <Offcanvas.Body className={styles.links_container}>
             {!isLoggedIn && (
               <Nav className='justify-content-end flex-grow-1 pe-3'>
                 <Nav.Link href='/login' className={styles.link}>login</Nav.Link>
@@ -64,11 +64,15 @@ const Header = () => {
             )}
 
             {isLoggedIn && (
-              <Nav className='justify-content-end flex-grow-1 pe-3'>
-                <Nav.Link className={styles.link} onClick={logout}>logout</Nav.Link>
-              </Nav>
+              <div className={styles.links_container}>
+                <Nav className='justify-content-end flex-grow-1 pe-3'>
+                  <Nav.Link href='/admin' className={styles.link}>admin</Nav.Link>
+                </Nav>
+                <Nav className='justify-content-end flex-grow-1 pe-3'>
+                  <Nav.Link className={styles.link} onClick={logout}>logout</Nav.Link>
+                </Nav>
+              </div>
             )}
-
           </Offcanvas.Body>
         </Navbar.Offcanvas>
       </Container>
