@@ -1,7 +1,7 @@
 import { ChangeEvent, FormEvent, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
-import { Button, Container, FloatingLabel, Form, Image, InputGroup } from 'react-bootstrap';
+import { Container, FloatingLabel, Form, Image, InputGroup } from 'react-bootstrap';
 import { FaEye, FaEyeSlash } from 'react-icons/fa6';
 
 import styles from '@/pages/ResetPassword/ResetPassword.module.css';
@@ -11,6 +11,7 @@ import { IResendLinkResponse, IResetPassword, IResetPasswordData } from '@/inter
 import { IGenericError } from '@/interfaces/errorInterface';
 import resetPassword from '@/api/auth/resetPassword';
 import { passwordValidator } from '@/helpers/validators';
+import Loader from '@/components/Loader';
 
 const ResetPassword = () => {
   const [searchParams] = useSearchParams();
@@ -18,7 +19,7 @@ const ResetPassword = () => {
   const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
   const [showModalError, setShowModalError] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const token = searchParams.get('token');
 
@@ -49,11 +50,12 @@ const ResetPassword = () => {
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    setLoading(true);
+    setIsLoading(true);
 
     if (!token) {
       setErrorMessage('token não informado');
       setShowModalError(true);
+      setIsLoading(false);
 
       return;
     }
@@ -61,6 +63,7 @@ const ResetPassword = () => {
     if (!values.password) {
       setErrorMessage('senha não informada');
       setShowModalError(true);
+      setIsLoading(false);
 
       return;
     }
@@ -70,6 +73,7 @@ const ResetPassword = () => {
     if (isPasswordValid.error) {
       setErrorMessage(isPasswordValid.message);
       setShowModalError(true);
+      setIsLoading(false);
 
       return;
     }
@@ -77,6 +81,7 @@ const ResetPassword = () => {
     if (values.confirmPassword !== values.password) {
       setErrorMessage('senhas não conferem');
       setShowModalError(true);
+      setIsLoading(false);
 
       return;
     }
@@ -91,12 +96,12 @@ const ResetPassword = () => {
     if ('error' in response) {
       setErrorMessage(response.message);
       setShowModalError(true);
-      setLoading(false);
+      setIsLoading(false);
 
       return;
     }
 
-    setLoading(false);
+    setIsLoading(false);
 
     navigate('/recadastrar-senha-ok');
   };
@@ -140,13 +145,9 @@ const ResetPassword = () => {
             </InputGroup.Text>
           </InputGroup>
 
-          {loading && (
-            <Button type='submit' className={styles.button} disabled>enviando...</Button>
-          )}
-
-          {!loading && (
-            <Button type='submit' className={styles.button}>enviar</Button>
-          )}
+          <button type='submit' className={styles.button}>
+            {isLoading && <Loader />} cadastrar
+          </button>
         </Form>
       </div>
 

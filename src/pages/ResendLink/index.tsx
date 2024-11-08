@@ -1,7 +1,7 @@
 import { ChangeEvent, FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { Button, Container, FloatingLabel, Form, Image } from 'react-bootstrap';
+import { Container, FloatingLabel, Form, Image } from 'react-bootstrap';
 
 import styles from '@/pages/ResendLink/ResendLink.module.css';
 import { emailValidator } from '@/helpers/validators';
@@ -10,12 +10,13 @@ import logo from '@/assets/img/myfavs.png';
 import resendLink from '@/api/auth/resendLink';
 import { IResendLinkResponse } from '@/interfaces/authInterface';
 import { IGenericError } from '@/interfaces/errorInterface';
+import Loader from '@/components/Loader';
 
 const ResendLink = () => {
   const navigate = useNavigate();
   const [showModalError, setShowModalError] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleModalErrorClose = () => setShowModalError(false);
 
@@ -28,12 +29,12 @@ const ResendLink = () => {
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    setLoading(true);
+    setIsLoading(true);
 
     if (!email) {
       setErrorMessage('e-mail não informado');
       setShowModalError(true);
-      setLoading(false);
+      setIsLoading(false);
 
       return;
     }
@@ -41,7 +42,7 @@ const ResendLink = () => {
     if (!emailValidator(email)) {
       setErrorMessage('e-mail com formato inválido');
       setShowModalError(true);
-      setLoading(false);
+      setIsLoading(false);
 
       return;
     }
@@ -51,12 +52,12 @@ const ResendLink = () => {
     if ('error' in response) {
       setErrorMessage(response.message);
       setShowModalError(true);
-      setLoading(false);
+      setIsLoading(false);
 
       return;
     }
 
-    setLoading(false);
+    setIsLoading(false);
 
     navigate('/cadastro-sucesso');
   };
@@ -84,13 +85,9 @@ const ResendLink = () => {
             />
           </FloatingLabel>
 
-          {loading && (
-            <Button type='submit' className={styles.button} disabled>enviando...</Button>
-          )}
-
-          {!loading && (
-            <Button type='submit' className={styles.button}>enviar</Button>
-          )}
+          <button type='submit' className={styles.button}>
+            {isLoading && <Loader />} cadastrar
+          </button>
         </Form>
       </div>
 

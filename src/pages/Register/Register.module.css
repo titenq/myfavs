@@ -73,12 +73,6 @@
   transition: all 0.3s ease-out;
 }
 
-.button:hover {
-  background-color: var(--nav-color);
-  color: var(--background-color);
-  border: 1px solid var(--background-color);
-}
-
 .links_container {
   display: flex;
   justify-content: center;

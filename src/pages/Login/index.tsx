@@ -1,7 +1,7 @@
 import { ChangeEvent, FormEvent, useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-import { Button, Container, FloatingLabel, Form, Image, InputGroup } from 'react-bootstrap';
+import { Container, FloatingLabel, Form, Image, InputGroup } from 'react-bootstrap';
 import { FaEye, FaEyeSlash } from 'react-icons/fa6';
 
 import styles from '@/pages/Login/Login.module.css';
@@ -10,6 +10,7 @@ import { emailValidator, passwordValidator } from '@/helpers/validators';
 import ModalError from '@/components/ModalError';
 import logo from '@/assets/img/myfavs.png';
 import AuthContext from '@/context/AuthContext';
+import Loader from '@/components/Loader';
 
 const Login = () => {
   const {
@@ -139,12 +140,10 @@ const Login = () => {
             </Link>
           </div>
 
-          {loading && (
-            <Button type='submit' className={styles.button} disabled>enviando...</Button>
-          )}
-
           {!loading && (
-            <Button type='submit' className={styles.button}>enviar</Button>
+            <button type='submit' className={styles.button}>
+              {loading && <Loader />} logar
+            </button>
           )}
         </Form>
       </div>

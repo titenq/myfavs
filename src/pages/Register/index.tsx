@@ -1,7 +1,7 @@
 import { ChangeEvent, FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { Button, Container, FloatingLabel, Form, Image, InputGroup } from 'react-bootstrap';
+import { Container, FloatingLabel, Form, Image, InputGroup } from 'react-bootstrap';
 import { FaEye, FaEyeSlash } from 'react-icons/fa6';
 
 import styles from '@/pages/Register/Register.module.css';
@@ -12,12 +12,14 @@ import { IRegister, IRegisterData } from '@/interfaces/registerInterface';
 import register from '@/api/auth/register';
 import { IUser } from '@/interfaces/userInterface';
 import { IGenericError } from '@/interfaces/errorInterface';
+import Loader from '@/components/Loader';
 
 const Register = () => {
   const navigate = useNavigate();
   const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
   const [showModalError, setShowModalError] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleModalErrorClose = () => setShowModalError(false);
 
@@ -48,9 +50,12 @@ const Register = () => {
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
+    setIsLoading(true);
+
     if (!values.name) {
       setErrorMessage('nome de usuário não informado');
       setShowModalError(true);
+      setIsLoading(false);
 
       return;
     }
@@ -58,6 +63,7 @@ const Register = () => {
     if (!values.email) {
       setErrorMessage('e-mail não informado');
       setShowModalError(true);
+      setIsLoading(false);
 
       return;
     }
@@ -65,6 +71,7 @@ const Register = () => {
     if (!emailValidator(values.email)) {
       setErrorMessage('e-mail com formato inválido');
       setShowModalError(true);
+      setIsLoading(false);
 
       return;
     }
@@ -72,6 +79,7 @@ const Register = () => {
     if (!values.password) {
       setErrorMessage('senha não informada');
       setShowModalError(true);
+      setIsLoading(false);
 
       return;
     }
@@ -81,6 +89,7 @@ const Register = () => {
     if (isPasswordValid.error) {
       setErrorMessage(isPasswordValid.message);
       setShowModalError(true);
+      setIsLoading(false);
 
       return;
     }
@@ -88,6 +97,7 @@ const Register = () => {
     if (values.confirmPassword !== values.password) {
       setErrorMessage('senhas não conferem');
       setShowModalError(true);
+      setIsLoading(false);
 
       return;
     }
@@ -103,9 +113,12 @@ const Register = () => {
     if ('error' in response) {
       setErrorMessage(response.message);
       setShowModalError(true);
+      setIsLoading(false);
 
       return;
     }
+
+    setIsLoading(false);
 
     navigate('/cadastro-sucesso');
   };
@@ -177,7 +190,9 @@ const Register = () => {
             </InputGroup.Text>
           </InputGroup>
 
-          <Button type='submit' className={styles.button}>enviar</Button>
+          <button type='submit' className={styles.button}>
+            {isLoading && <Loader />} cadastrar
+          </button>
         </Form>
       </div>
 
