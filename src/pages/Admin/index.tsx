@@ -9,7 +9,6 @@ const Admin = () => {
 
   return (
     <Container>
-      <div>Admin</div>
       <p>{user?.name}</p>
     </Container>
   );

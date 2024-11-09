@@ -22,7 +22,7 @@ const authLogout = async (): Promise<ILogoutResponse | IGenericError> => {
   } catch (error) {
     const errorMessage: IGenericError = {
       error: true,
-      message: 'erro ao fazer login',
+      message: 'erro ao fazer logout',
       statusCode: 400
     }
 
