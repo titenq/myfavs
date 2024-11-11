@@ -1,0 +1,36 @@
+.container {
+  width: 100vw;
+  padding: 20px;
+}
+
+.user {
+  margin: 0;
+}
+
+.folders_container {
+  width: fit-content;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.user_container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 15px;
+}
+
+.add_folder_icon {
+  cursor: pointer;
+}
+
+.folder_container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 5px;
+  cursor: pointer;
+}

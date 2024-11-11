@@ -22,8 +22,7 @@ const resendLink = async (resendLink: IResendLink): Promise<IResendLinkResponse 
     const data: IResendLinkResponse = await response.json();
 
     return data;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  } catch (error) {
+  } catch (_error) {
     const errorMessage: IGenericError = {
       error: true,
       message: 'erro ao reenviar link',

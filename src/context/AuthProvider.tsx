@@ -51,8 +51,7 @@ const AuthProvider: FC<IAuthProviderProps> = ({ children }) => {
       }
 
       return;
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (error) {
+    } catch (_error) {
       setError('erro ao fazer login');
       setUser(null);
       setIsLoggedIn(false);

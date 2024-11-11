@@ -22,8 +22,7 @@ const resetPassword = async (resetPasswordData: IResetPasswordData): Promise<IRe
     const data: IResendLinkResponse = await response.json();
 
     return data;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  } catch (error) {
+  } catch (_error) {
     const errorMessage: IGenericError = {
       error: true,
       message: 'erro ao recadastrar senha',

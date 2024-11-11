@@ -18,8 +18,7 @@ const authLogout = async (): Promise<ILogoutResponse | IGenericError> => {
     const data: ILogoutResponse = await response.json();
 
     return data;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  } catch (error) {
+  } catch (_error) {
     const errorMessage: IGenericError = {
       error: true,
       message: 'erro ao fazer logout',

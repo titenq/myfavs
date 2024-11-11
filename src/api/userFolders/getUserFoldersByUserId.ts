@@ -1,17 +1,15 @@
 import { backendBaseUrl } from '@/helpers/baseUrl';
 import { IGenericError } from '@/interfaces/errorInterface';
-import { ILoginData } from '@/interfaces/loginInterface';
-import { IUser } from '@/interfaces/userInterface';
+import { IUserFolder } from '@/interfaces/userFoldersInterface';
 
-const login = async (loginData: ILoginData): Promise<IUser | IGenericError> => {
+const getUserFoldersByUserId = async (userId: string): Promise<IUserFolder | IGenericError> => {
   try {
-    const response = await fetch(`${backendBaseUrl}/auth/login`, {
-      method: 'POST',
+    const response = await fetch(`${backendBaseUrl}/folders/${userId}`, {
+      method: 'GET',
       credentials: 'include',
       headers: {
         'Content-Type': 'application/json; charset=utf-8'
-      },
-      body: JSON.stringify(loginData)
+      }
     });
 
     if (!response.ok) {
@@ -20,13 +18,13 @@ const login = async (loginData: ILoginData): Promise<IUser | IGenericError> => {
       return data;
     }
 
-    const data: IUser = await response.json();
+    const data: IUserFolder = await response.json();
 
     return data;
   } catch (_error) {
     const errorMessage: IGenericError = {
       error: true,
-      message: 'erro ao fazer login',
+      message: 'erro ao buscar as pastas do usuário',
       statusCode: 400
     }
 
@@ -34,4 +32,4 @@ const login = async (loginData: ILoginData): Promise<IUser | IGenericError> => {
   }
 };
 
-export default login;
+export default getUserFoldersByUserId;
