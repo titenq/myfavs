@@ -1,22 +1,15 @@
 import { Button, Form, Modal } from 'react-bootstrap';
 
 import styles from '@/components/ModalForm/ModalForm.module.css';
+import { IModal } from '@/interfaces/modalInterface';
 
-const ModalForm = (props: {
-  showModal: boolean;
-  closeModal: () => void;
-  title: string;
-  onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
-  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  folderName: string;
-  isLoading: boolean;
-}) => {
+const ModalForm = (props: IModal) => {
   return (
     <Modal show={props.showModal} onHide={props.closeModal}>
       <Modal.Header closeButton>
         <Modal.Title className={styles.modal_title}>{props.title}</Modal.Title>
       </Modal.Header>
-      <Modal.Body>
+      <Modal.Body className={styles.modal_body}>
         <Form onSubmit={props.onSubmit} noValidate>
           <Form.Group controlId="folderName">
             <Form.Label>*nome da pasta:</Form.Label>
@@ -28,16 +21,25 @@ const ModalForm = (props: {
               value={props.folderName}
             />
           </Form.Group>
-          <Button variant="flat" className={styles.btn} type='submit' disabled={props.isLoading}>
-            {props.isLoading ? 'salvando...' : 'salvar'}
-          </Button>
+          <Modal.Footer className={styles.modal_footer}>
+            <Button
+              variant="flat"
+              className={styles.button_cancel}
+              onClick={props.closeModal}
+            >
+              cancelar
+            </Button>
+            <Button
+              variant="flat"
+              className={styles.button_save}
+              type='submit'
+              disabled={props.isLoading}
+            >
+              {props.isLoading ? 'salvando...' : 'salvar'}
+            </Button>
+          </Modal.Footer>
         </Form>
       </Modal.Body>
-      <Modal.Footer>
-        <Button variant="secondary" className={styles.btn_secondary} onClick={props.closeModal}>
-          cancelar
-        </Button>
-      </Modal.Footer>
     </Modal>
   );
 };

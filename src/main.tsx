@@ -12,9 +12,9 @@ import AuthProvider from '@/context/AuthProvider.tsx';
 // ReactGA.initialize(GOOGLE_ANALYTICS_TAG);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <AuthProvider>
-    <React.StrictMode>
+  <React.StrictMode>
+    <AuthProvider>
       <App />
-    </React.StrictMode>
-  </AuthProvider>
+    </AuthProvider>
+  </React.StrictMode>
 );

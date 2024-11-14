@@ -1,8 +1,7 @@
 import { backendBaseUrl } from '@/helpers/baseUrl';
 import { IGenericError } from '@/interfaces/errorInterface';
-import { IUserFolder } from '@/interfaces/userFoldersInterface';
 
-const createUserFolder = async (userId: string, folderName: string): Promise<IUserFolder | IGenericError> => {
+const createUserFolder = async (userId: string, folderName: string): Promise<{ ok: true } | IGenericError> => {
   try {
     const response = await fetch(`${backendBaseUrl}/folders/${userId}`, {
       method: 'POST',
@@ -10,7 +9,7 @@ const createUserFolder = async (userId: string, folderName: string): Promise<IUs
       headers: {
         'Content-Type': 'application/json; charset=utf-8'
       },
-      body: JSON.stringify(folderName)
+      body: JSON.stringify({ folderName })
     });
 
     if (!response.ok) {
@@ -19,9 +18,7 @@ const createUserFolder = async (userId: string, folderName: string): Promise<IUs
       return data;
     }
 
-    const data: IUserFolder = await response.json();
-
-    return data;
+    return { ok: true };
   } catch (_error) {
     const errorMessage: IGenericError = {
       error: true,

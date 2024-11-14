@@ -9,6 +9,7 @@ import { IFolder } from '@/interfaces/userFoldersInterface';
 import getUserFoldersByUserId from '@/api/userFolders/getUserFoldersByUserId';
 import ModalError from '@/components/ModalError';
 import ModalForm from '../../components/ModalForm/index';
+import createUserFolder from '@/api/userFolders/createUserFolder';
 
 const Admin = () => {
   const { user } = useContext(AuthContext);
@@ -19,6 +20,7 @@ const Admin = () => {
   const [isFolderOpen, setIsFolderOpen] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [folderName, setFolderName] = useState<string>('');
+  const [isRefresh, setIsRefresh] = useState<boolean>(false);
 
   const handleModalErrorClose = () => setShowModalError(false);
   const handleModalClose = () => setShowModal(false);
@@ -42,7 +44,7 @@ const Admin = () => {
     };
 
     getFolders();
-  }, [user?._id]);
+  }, [user?._id, isRefresh]);
 
   const handleFolderClick = () => {
     setIsFolderOpen(!isFolderOpen);
@@ -55,7 +57,24 @@ const Admin = () => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    console.log(folderName);
+    setIsLoading(true);
+
+    if (user?._id) {
+      const response = await createUserFolder(user?._id, folderName);
+
+      if ('error' in response) {
+        setErrorMessage(response.message);
+        setShowModalError(true);
+        setIsLoading(false);
+
+        return;
+      }
+
+      setIsLoading(false);
+      setShowModal(false);
+      setFolderName('');
+      setIsRefresh(!isRefresh);
+    }
   };
 
   return (

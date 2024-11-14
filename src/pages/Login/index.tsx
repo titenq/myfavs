@@ -82,14 +82,9 @@ const Login = () => {
 
     await authenticate(values);
 
-    if (error) {
-      setErrorMessage(error);
-      setShowModalError(true);
-
-      return;
+    if (!error) {
+      navigate('/admin');
     }
-
-    navigate('/admin');
   };
 
   return (
@@ -110,6 +105,7 @@ const Login = () => {
               type='email'
               name='email'
               placeholder='e-mail'
+              value={values.email}
               className={styles.control}
               onChange={handleChange}
             />
@@ -121,6 +117,7 @@ const Login = () => {
                 type={passwordVisible ? 'text' : 'password'}
                 name='password'
                 placeholder='senha'
+                value={values.password}
                 className={styles.control}
                 onChange={handleChange}
               />
