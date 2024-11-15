@@ -18,6 +18,7 @@ const Admin = () => {
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isFolderOpen, setIsFolderOpen] = useState<boolean>(false);
+  const [openFolderId, setOpenFolderId] = useState('');
   const [showModal, setShowModal] = useState<boolean>(false);
   const [folderName, setFolderName] = useState<string>('');
   const [isRefresh, setIsRefresh] = useState<boolean>(false);
@@ -46,8 +47,8 @@ const Admin = () => {
     getFolders();
   }, [user?._id, isRefresh]);
 
-  const handleFolderClick = () => {
-    setIsFolderOpen(!isFolderOpen);
+  const handleFolderClick = (folderId: string) => {
+    setOpenFolderId(openFolderId === folderId ? '' : folderId);
   };
 
   const handleAddFolder = async () => {
@@ -60,6 +61,16 @@ const Admin = () => {
     setIsLoading(true);
 
     if (user?._id) {
+      const foldersName = userFolders.map(folder => folder.name);
+      
+      if (foldersName.includes(folderName)) {
+        setErrorMessage('Já existe uma pasta com esse nome');
+        setShowModalError(true);
+        setIsLoading(false);
+
+        return;
+      }
+
       const response = await createUserFolder(user?._id, folderName);
 
       if ('error' in response) {
@@ -95,9 +106,13 @@ const Admin = () => {
             <div
               key={folder._id}
               className={styles.folder_container}
-              onClick={handleFolderClick}
+              onClick={() => handleFolderClick(folder._id)}
             >
-              {isFolderOpen ? <FcOpenedFolder size={34} /> : <FcFolder size={34} />}
+              {openFolderId === folder._id ? (
+                <FcOpenedFolder size={34} />
+              ) : (
+                <FcFolder size={34} />
+              )}
               <span>{folder.name}</span>
               
               {isFolderOpen && (
