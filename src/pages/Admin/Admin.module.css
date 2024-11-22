@@ -34,3 +34,25 @@
   gap: 5px;
   cursor: pointer;
 }
+
+.context_menu_container {
+  position: absolute;
+  background-color: var(--color);
+  color: var(--background-color);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+
+.context_menu_close_icon {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.context_menu_options {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 5px;
+  padding: 0 10px 10px 10px;
+}

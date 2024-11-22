@@ -1,30 +1,47 @@
 import { useContext, useEffect, useState } from 'react';
 
 import { FcFolder, FcOpenedFolder } from 'react-icons/fc';
-import { FaFolderPlus } from 'react-icons/fa6';
+import { FaFolderPlus, FaLink, FaRegTrashCan } from 'react-icons/fa6';
+import { FaRegEdit } from 'react-icons/fa';
+import { IoCloseCircleSharp } from 'react-icons/io5';
+import { LuFolderPlus } from 'react-icons/lu';
 
 import styles from '@/pages/Admin/Admin.module.css';
 import AuthContext from '@/context/AuthContext';
 import { IFolder } from '@/interfaces/userFoldersInterface';
 import getUserFoldersByUserId from '@/api/userFolders/getUserFoldersByUserId';
 import ModalError from '@/components/ModalError';
-import ModalForm from '../../components/ModalForm/index';
+import ModalAddFolder from '@/components/ModalAddFolder';
 import createUserFolder from '@/api/userFolders/createUserFolder';
+import ModalAddLink from '@/components/ModalAddLink';
+import { Actions } from '@/enums/actions';
+import createLink from '@/api/userFolders/createLink';
 
 const Admin = () => {
   const { user } = useContext(AuthContext);
+  const [action, setAction] = useState<Actions | null>(null);
   const [userFolders, setUserFolders] = useState<IFolder[]>([]);
   const [showModalError, setShowModalError] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isFolderOpen, setIsFolderOpen] = useState<boolean>(false);
   const [openFolderId, setOpenFolderId] = useState('');
-  const [showModal, setShowModal] = useState<boolean>(false);
+  const [showModalAddFolder, setShowModalAddFolder] = useState<boolean>(false);
+  const [showModalAddLink, setShowModalAddLink] = useState<boolean>(false);
   const [folderName, setFolderName] = useState<string>('');
   const [isRefresh, setIsRefresh] = useState<boolean>(false);
+  const [contextMenuVisible, setContextMenuVisible] = useState<boolean>(false);
+  const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
+  const [activeFolder, setActiveFolder] = useState<string | null>(null);
+  const [addLinkValues, setAddLinkValues] = useState({
+    url: '',
+    isPrivate: false,
+    description: '',
+  });
+  const [addLinkFolderId, setAddLinkFolderId] = useState<string | null>(null);
 
   const handleModalErrorClose = () => setShowModalError(false);
-  const handleModalClose = () => setShowModal(false);
+  const handleModalAddFolderClose = () => setShowModalAddFolder(false);
+  const handleModalAddLinkClose = () => setShowModalAddLink(false);
 
   useEffect(() => {
     const getFolders = async () => {
@@ -51,8 +68,39 @@ const Admin = () => {
     setOpenFolderId(openFolderId === folderId ? '' : folderId);
   };
 
-  const handleAddFolder = async () => {
-    setShowModal(true);
+  const handleAddFolder = () => {
+    setAction(Actions.ADD_FOLDER);
+    setShowModalAddFolder(true);
+  };
+
+  const handleAddLink = (folderId: string) => {
+    setAction(Actions.ADD_LINK);
+    setAddLinkFolderId(folderId);
+    setShowModalAddLink(true);
+  };
+
+  const handleLinkClick = (folderId: string) => {
+    console.log(user?._id, folderId);
+  };
+
+  const handleContextMenu = (event: React.MouseEvent<HTMLDivElement>, folderId: string) => {
+    event.preventDefault();
+
+    setContextMenuVisible(true);
+    setContextMenuPosition({ x: event.pageX + 50, y: event.pageY - 25 });
+    setActiveFolder(folderId);
+  };
+
+  const handleCloseContextMenu = () => {
+    setContextMenuVisible(false);
+    setActiveFolder(null);
+  };
+
+  const handleAddLinkChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setAddLinkValues({
+      ...addLinkValues,
+      [event.target.name]: event.target.value,
+    });
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -60,7 +108,15 @@ const Admin = () => {
 
     setIsLoading(true);
 
-    if (user?._id) {
+    if (action === Actions.ADD_FOLDER && user?._id) {
+      if (!folderName) {
+        setErrorMessage('nome da pasta é obrigatório');
+        setShowModalError(true);
+        setIsLoading(false);
+
+        return;
+      }
+
       const foldersName = userFolders.map(folder => folder.name);
       
       if (foldersName.includes(folderName)) {
@@ -71,7 +127,8 @@ const Admin = () => {
         return;
       }
 
-      const response = await createUserFolder(user?._id, folderName);
+
+      const response = await createUserFolder(user._id, folderName);
 
       if ('error' in response) {
         setErrorMessage(response.message);
@@ -82,14 +139,58 @@ const Admin = () => {
       }
 
       setIsLoading(false);
-      setShowModal(false);
+      setShowModalAddFolder(false);
       setFolderName('');
+      setIsRefresh(!isRefresh);
+    }
+
+    if (action === Actions.ADD_LINK && user?._id && addLinkFolderId) {
+      if (!addLinkValues.url) {
+        setErrorMessage('url é obrigatório');
+        setShowModalError(true);
+        setIsLoading(false);
+
+        return;
+      }
+
+      if (!addLinkValues.isPrivate) {
+        setErrorMessage('marque se o link é público ou privado');
+        setShowModalError(true);
+        setIsLoading(false);
+
+        return;
+      }
+
+      const folder = userFolders.find(folder => folder._id === addLinkFolderId);
+      const urls = folder?.links?.map(item => item.url) || [];
+
+      if (urls.includes(addLinkValues.url)) {
+        setErrorMessage('Já existe um link com essa URL');
+        setShowModalError(true);
+        setIsLoading(false);
+
+        return;
+      }
+
+      const response = await createLink(user._id, addLinkValues, addLinkFolderId);
+
+      if ('error' in response) {
+        setErrorMessage(response.message);
+        setShowModalError(true);
+        setIsLoading(false);
+
+        return;
+      }
+
+      setIsLoading(false);
+      setShowModalAddLink(false);
+      setAddLinkValues({ url: '', isPrivate: false, description: '' });
       setIsRefresh(!isRefresh);
     }
   };
 
   return (
-    <div className={styles.container}>
+    <div className={styles.container} onClick={handleCloseContextMenu}>
       {isLoading && <p>Carregando as pastas do usuário...</p>}
       {userFolders && (
         <div className={styles.folders_container}>
@@ -107,6 +208,7 @@ const Admin = () => {
               key={folder._id}
               className={styles.folder_container}
               onClick={() => handleFolderClick(folder._id)}
+              onContextMenu={event => handleContextMenu(event, folder._id)}
             >
               {openFolderId === folder._id ? (
                 <FcOpenedFolder size={34} />
@@ -114,8 +216,9 @@ const Admin = () => {
                 <FcFolder size={34} />
               )}
               <span>{folder.name}</span>
+              <FaLink size={20} onClick={() => handleLinkClick(folder._id)} />
               
-              {isFolderOpen && (
+              {openFolderId === folder._id && (
                 <div className={styles.folder_content}>
                   {folder?.links && folder?.links?.length > 0 && (
                     <div className={styles.links_container}>
@@ -136,6 +239,50 @@ const Admin = () => {
                   )}
                 </div>
               )}
+
+              {activeFolder === folder?._id && contextMenuVisible && (
+                <div
+                  className={styles.context_menu_container}
+                  style={{
+                    top: contextMenuPosition.y,
+                    left: contextMenuPosition.x
+                  }}
+                >
+                  <div className={styles.context_menu_close_icon}>
+                    <IoCloseCircleSharp size={24} onClick={handleCloseContextMenu} />
+                  </div>
+
+                  <div className={styles.context_menu_options}>
+                    <div
+                      onClick={() => alert(`Adicionar subpasta Div ${folder?._id}`)}
+                    >
+                      <LuFolderPlus size={20} />&nbsp;
+                      adicionar subpasta na pasta {folder?.name}
+                    </div>
+
+                    <div
+                      onClick={() => handleAddLink(folder?._id)}
+                    >
+                      <FaLink size={18} />&nbsp;
+                      adicionar link na pasta {folder?.name}
+                    </div>
+
+                    <div
+                      onClick={() => alert(`Editando a Div ${folder?._id}`)}
+                    >
+                      <FaRegEdit size={18} />&nbsp;
+                      editar o nome da pasta {folder?.name}
+                    </div>
+
+                    <div
+                      onClick={() => alert(`Deletando a Div ${folder?._id}`)}
+                    >
+                      <FaRegTrashCan size={18} />&nbsp;
+                      deletar pasta {folder?.name}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           ))}
         </div>
@@ -147,14 +294,24 @@ const Admin = () => {
         errorMessage={errorMessage}
       />
 
-      <ModalForm
-        showModal={showModal}
-        closeModal={handleModalClose}
-        title="Adicionar pasta"
+      <ModalAddFolder
+        showModal={showModalAddFolder}
+        closeModal={handleModalAddFolderClose}
         onSubmit={handleSubmit}
         onChange={event => setFolderName(event.target.value)}
         folderName={folderName}
         isLoading={isLoading}
+      />
+
+      <ModalAddLink
+        showModal={showModalAddLink}
+        closeModal={handleModalAddLinkClose}
+        onSubmit={handleSubmit}
+        onChange={handleAddLinkChange}
+        isLoading={isLoading}
+        url={addLinkValues?.url}
+        isPrivate={addLinkValues?.isPrivate}
+        description={addLinkValues?.description}
       />
     </div>
   );

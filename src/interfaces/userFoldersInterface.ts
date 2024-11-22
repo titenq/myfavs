@@ -6,6 +6,8 @@ interface ILink {
   isPrivate: boolean;
 }
 
+export type ILinkBody = Omit<ILink, '_id'>;
+
 export interface IFolder {
   _id: string;
   name: string;

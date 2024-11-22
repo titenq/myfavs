@@ -1,13 +1,13 @@
 import { Button, Form, Modal } from 'react-bootstrap';
 
-import styles from '@/components/ModalForm/ModalForm.module.css';
-import { IModal } from '@/interfaces/modalInterface';
+import styles from '@/components/ModalAddFolder/ModalAddFolder.module.css';
+import { IModalAddFolder } from '@/interfaces/modalInterface';
 
-const ModalForm = (props: IModal) => {
+const ModalAddFolder = (props: IModalAddFolder) => {
   return (
     <Modal show={props.showModal} onHide={props.closeModal}>
       <Modal.Header closeButton>
-        <Modal.Title className={styles.modal_title}>{props.title}</Modal.Title>
+        <Modal.Title className={styles.modal_title}>adicionar pasta</Modal.Title>
       </Modal.Header>
       <Modal.Body className={styles.modal_body}>
         <Form onSubmit={props.onSubmit} noValidate>
@@ -44,4 +44,4 @@ const ModalForm = (props: IModal) => {
   );
 };
 
-export default ModalForm;
+export default ModalAddFolder;
