@@ -16,6 +16,8 @@ import createUserFolder from '@/api/userFolders/createUserFolder';
 import ModalAddLink from '@/components/ModalAddLink';
 import { Actions } from '@/enums/actions';
 import createLink from '@/api/userFolders/createLink';
+import noScreenshot from '@/assets/img/no-screenshot.webp';
+import { Image } from 'react-bootstrap';
 
 const Admin = () => {
   const { user } = useContext(AuthContext);
@@ -38,6 +40,7 @@ const Admin = () => {
     description: '',
   });
   const [addLinkFolderId, setAddLinkFolderId] = useState<string | null>(null);
+  const [userFolderName, setUserFolderName] = useState<string>('');
 
   const handleModalErrorClose = () => setShowModalError(false);
   const handleModalAddFolderClose = () => setShowModalAddFolder(false);
@@ -64,8 +67,9 @@ const Admin = () => {
     getFolders();
   }, [user?._id, isRefresh]);
 
-  const handleFolderClick = (folderId: string) => {
+  const handleFolderClick = (folderId: string, folderName: string) => {
     setOpenFolderId(openFolderId === folderId ? '' : folderId);
+    setUserFolderName(openFolderId === folderId ? '' : folderName);
   };
 
   const handleAddFolder = () => {
@@ -77,10 +81,6 @@ const Admin = () => {
     setAction(Actions.ADD_LINK);
     setAddLinkFolderId(folderId);
     setShowModalAddLink(true);
-  };
-
-  const handleLinkClick = (folderId: string) => {
-    console.log(user?._id, folderId);
   };
 
   const handleContextMenu = (event: React.MouseEvent<HTMLDivElement>, folderId: string) => {
@@ -126,7 +126,6 @@ const Admin = () => {
 
         return;
       }
-
 
       const response = await createUserFolder(user._id, folderName);
 
@@ -192,42 +191,62 @@ const Admin = () => {
   return (
     <div className={styles.container} onClick={handleCloseContextMenu}>
       {isLoading && <p>Carregando as pastas do usuário...</p>}
-      {userFolders && (
-        <div className={styles.folders_container}>
-          <div className={styles.user_container}>
-            <p className={styles.user}>{user?.name}</p>
-            <FaFolderPlus
-              size={22}
-              className={styles.add_folder_icon}
-              onClick={handleAddFolder}
-            />
-          </div>
 
-          {userFolders.map(folder => (
-            <div
-              key={folder._id}
-              className={styles.folder_container}
-              onClick={() => handleFolderClick(folder._id)}
-              onContextMenu={event => handleContextMenu(event, folder._id)}
-            >
-              {openFolderId === folder._id ? (
-                <FcOpenedFolder size={34} />
-              ) : (
-                <FcFolder size={34} />
-              )}
-              <span>{folder.name}</span>
-              <FaLink size={20} onClick={() => handleLinkClick(folder._id)} />
-              
-              {openFolderId === folder._id && (
-                <div className={styles.folder_content}>
-                  {folder?.links && folder?.links?.length > 0 && (
-                    <div className={styles.links_container}>
-                      <h4>Links:</h4>
-                      {folder?.links.map(link => (
-                        <div key={link._id}>{link.url}</div>
-                      ))}
+      {userFolders && (
+        <div className={styles.layout_container}>
+          <aside className={styles.sidebar}>
+            <div className={styles.user_container}>
+              <p className={styles.user}>{user?.name}</p>
+
+              <FaFolderPlus
+                size={22}
+                className={styles.add_folder_icon}
+                onClick={handleAddFolder}
+              />
+            </div>
+
+            {userFolders.map(folder => (
+              <div
+                key={folder._id}
+                className={styles.folder_container}
+                onClick={() => handleFolderClick(folder._id, folder.name)}
+                onContextMenu={event => handleContextMenu(event, folder._id)}
+              >
+                {openFolderId === folder._id ? (
+                  <FcOpenedFolder size={34} />
+                ) : (
+                  <FcFolder size={34} />
+                )}
+
+                <span>{folder.name}</span>
+              </div>
+            ))}
+          </aside>
+
+          <main className={styles.main_content}>
+            <div className={styles.folder_name}>{userFolderName}</div>
+
+            {userFolders.map(folder => (
+              openFolderId === folder._id && (
+                <div key={folder._id} className={styles.folder_content}>
+                  {folder?.links && folder?.links?.length > 0 && folder?.links.map(link => (
+                    <div key={link._id} className={styles.links_container}>
+                      <Image src={noScreenshot} alt='no screenshot' className={styles.screenshot} />
+
+                      <a
+                        href={link.url}
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        className={styles.link_url}
+                      >
+                        {link.url}
+                      </a>
+
+                      {link?.description && (
+                        <div className={styles.link_description}>{link.description}</div>
+                      )}
                     </div>
-                  )}
+                  ))}
                   
                   {folder?.subfolders && folder?.subfolders?.length > 0 && (
                     <div className={styles.subfolders_container}>
@@ -238,10 +257,13 @@ const Admin = () => {
                     </div>
                   )}
                 </div>
-              )}
+              )
+            ))}
 
-              {activeFolder === folder?._id && contextMenuVisible && (
+            {userFolders.map(folder => (
+              activeFolder === folder._id && contextMenuVisible && (
                 <div
+                  key={folder._id}
                   className={styles.context_menu_container}
                   style={{
                     top: contextMenuPosition.y,
@@ -254,37 +276,41 @@ const Admin = () => {
 
                   <div className={styles.context_menu_options}>
                     <div
-                      onClick={() => alert(`Adicionar subpasta Div ${folder?._id}`)}
+                      className={styles.context_menu_option}
+                      onClick={() => alert(`Adicionar subpasta Div ${folder._id}`)}
                     >
-                      <LuFolderPlus size={20} />&nbsp;
-                      adicionar subpasta na pasta {folder?.name}
+                      <LuFolderPlus size={20} />
+                      adicionar subpasta na pasta {folder.name}
                     </div>
 
                     <div
-                      onClick={() => handleAddLink(folder?._id)}
+                      className={styles.context_menu_option}
+                      onClick={() => handleAddLink(folder._id)}
                     >
-                      <FaLink size={18} />&nbsp;
-                      adicionar link na pasta {folder?.name}
+                      <FaLink size={18} />
+                      adicionar link na pasta {folder.name}
                     </div>
 
                     <div
-                      onClick={() => alert(`Editando a Div ${folder?._id}`)}
+                      className={styles.context_menu_option}
+                      onClick={() => alert(`Editando a Div ${folder._id}`)}
                     >
-                      <FaRegEdit size={18} />&nbsp;
-                      editar o nome da pasta {folder?.name}
+                      <FaRegEdit size={18} />
+                      editar o nome da pasta {folder.name}
                     </div>
 
                     <div
-                      onClick={() => alert(`Deletando a Div ${folder?._id}`)}
+                      className={styles.context_menu_option}
+                      onClick={() => alert(`Deletando a Div ${folder._id}`)}
                     >
-                      <FaRegTrashCan size={18} />&nbsp;
-                      deletar pasta {folder?.name}
+                      <FaRegTrashCan size={18} />
+                      deletar pasta {folder.name}
                     </div>
                   </div>
                 </div>
-              )}
-            </div>
-          ))}
+              )
+            ))}
+          </main>
         </div>
       )}
 
