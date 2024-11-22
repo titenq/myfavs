@@ -231,7 +231,20 @@ const Admin = () => {
                 <div key={folder._id} className={styles.folder_content}>
                   {folder?.links && folder?.links?.length > 0 && folder?.links.map(link => (
                     <div key={link._id} className={styles.links_container}>
-                      <Image src={noScreenshot} alt='no screenshot' className={styles.screenshot} />
+                      {link?.picture ? (
+                        <Image
+                          src={`http://localhost:3300${link?.picture}`}
+                          alt='screenshot'
+                          crossOrigin="anonymous"
+                          className={styles.screenshot}
+                        />
+                      ): (
+                        <Image
+                          src={noScreenshot}
+                          alt='no screenshot'
+                          className={styles.screenshot}
+                        />
+                      )}
 
                       <a
                         href={link.url}
