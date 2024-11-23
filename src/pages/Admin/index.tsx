@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 
 import { FcFolder, FcOpenedFolder } from 'react-icons/fc';
 import { FaFolderPlus, FaLink, FaRegTrashCan } from 'react-icons/fa6';
-import { FaRegEdit } from 'react-icons/fa';
+import { FaRegEdit, FaLock } from 'react-icons/fa';
 import { IoCloseCircleSharp } from 'react-icons/io5';
 import { LuFolderPlus } from 'react-icons/lu';
 
@@ -246,14 +246,19 @@ const Admin = () => {
                         />
                       )}
 
-                      <a
-                        href={link.url}
-                        target='_blank'
-                        rel='noopener noreferrer'
-                        className={styles.link_url}
-                      >
-                        {link.url}
-                      </a>
+                      <div className={styles.link_container}>
+                        {link?.isPrivate && (
+                          <FaLock size={14} />
+                        )}
+                        <a
+                          href={link.url}
+                          target='_blank'
+                          rel='noopener noreferrer'
+                          className={styles.link_url}
+                        >
+                          {link.url}
+                        </a>
+                      </div>
 
                       {link?.description && (
                         <div className={styles.link_description}>{link.description}</div>

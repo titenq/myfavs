@@ -104,6 +104,13 @@
   border-radius: 5px;
 }
 
+.link_container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+}
+
 .link_url {
   color: var(--white);
   font-size: 0.8rem;
