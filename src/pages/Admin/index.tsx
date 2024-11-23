@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 
+import { Image } from 'react-bootstrap';
 import { FcFolder, FcOpenedFolder } from 'react-icons/fc';
 import { FaFolderPlus, FaLink, FaRegTrashCan } from 'react-icons/fa6';
 import { FaRegEdit, FaLock } from 'react-icons/fa';
@@ -17,7 +18,8 @@ import ModalAddLink from '@/components/ModalAddLink';
 import { Actions } from '@/enums/actions';
 import createLink from '@/api/userFolders/createLink';
 import noScreenshot from '@/assets/img/no-screenshot.webp';
-import { Image } from 'react-bootstrap';
+import ModalAddSubfolder from '@/components/ModalAddSubfolder';
+import createUserSubfolder from '@/api/userFolders/createUserSubfolder';
 
 const Admin = () => {
   const { user } = useContext(AuthContext);
@@ -41,10 +43,14 @@ const Admin = () => {
   });
   const [addLinkFolderId, setAddLinkFolderId] = useState<string | null>(null);
   const [userFolderName, setUserFolderName] = useState<string>('');
+  const [subfolderName, setSubfolderName] = useState<string>('');
+  const [addSubfolderId, setAddSubfolderId] = useState<string | null>(null);
+  const [showModalAddSubfolder, setShowModalAddSubfolder] = useState<boolean>(false);
 
   const handleModalErrorClose = () => setShowModalError(false);
   const handleModalAddFolderClose = () => setShowModalAddFolder(false);
   const handleModalAddLinkClose = () => setShowModalAddLink(false);
+  const handleModalAddSubfolderClose = () => setShowModalAddSubfolder(false);
 
   useEffect(() => {
     const getFolders = async () => {
@@ -81,6 +87,12 @@ const Admin = () => {
     setAction(Actions.ADD_LINK);
     setAddLinkFolderId(folderId);
     setShowModalAddLink(true);
+  };
+
+  const handleAddSubfolder = (folderId: string) => {
+    setAction(Actions.ADD_SUBFOLDER);
+    setAddSubfolderId(folderId);
+    setShowModalAddSubfolder(true);
   };
 
   const handleContextMenu = (event: React.MouseEvent<HTMLDivElement>, folderId: string) => {
@@ -143,6 +155,42 @@ const Admin = () => {
       setIsRefresh(!isRefresh);
     }
 
+    if (action === Actions.ADD_SUBFOLDER && user?._id && addSubfolderId) {
+      if (!subfolderName) {
+        setErrorMessage('nome da subpasta é obrigatório');
+        setShowModalError(true);
+        setIsLoading(false);
+
+        return;
+      }
+
+      const subfoldersName = userFolders.flatMap(folder => folder.subfolders?.map(subfolder => subfolder.name) ?? []);
+      
+      if (subfoldersName.includes(subfolderName)) {
+        setErrorMessage('Já existe uma subpasta com esse nome');
+        setShowModalError(true);
+        setIsLoading(false);
+
+        return;
+      }
+
+      const response = await createUserSubfolder(user._id, subfolderName, addSubfolderId);
+
+      if ('error' in response) {
+        setErrorMessage(response.message);
+        setShowModalError(true);
+        setIsLoading(false);
+
+        return;
+      }
+
+      setIsLoading(false);
+      setShowModalAddSubfolder(false);
+      setSubfolderName('');
+      setAddSubfolderId(null);
+      setIsRefresh(!isRefresh);
+    }
+
     if (action === Actions.ADD_LINK && user?._id && addLinkFolderId) {
       if (!addLinkValues.url) {
         setErrorMessage('url é obrigatório');
@@ -184,6 +232,7 @@ const Admin = () => {
       setIsLoading(false);
       setShowModalAddLink(false);
       setAddLinkValues({ url: '', isPrivate: false, description: '' });
+      setAddLinkFolderId(null);
       setIsRefresh(!isRefresh);
     }
   };
@@ -268,9 +317,8 @@ const Admin = () => {
                   
                   {folder?.subfolders && folder?.subfolders?.length > 0 && (
                     <div className={styles.subfolders_container}>
-                      <h4>Subfolders:</h4>
                       {folder?.subfolders.map(subfolder => (
-                        <div key={subfolder._id}>{subfolder.name}</div>
+                        <div key={subfolder.name}>{subfolder.name}</div>
                       ))}
                     </div>
                   )}
@@ -295,7 +343,7 @@ const Admin = () => {
                   <div className={styles.context_menu_options}>
                     <div
                       className={styles.context_menu_option}
-                      onClick={() => alert(`Adicionar subpasta Div ${folder._id}`)}
+                      onClick={() => handleAddSubfolder(folder._id)}
                     >
                       <LuFolderPlus size={20} />
                       adicionar subpasta na pasta {folder.name}
@@ -344,6 +392,15 @@ const Admin = () => {
         onSubmit={handleSubmit}
         onChange={event => setFolderName(event.target.value)}
         folderName={folderName}
+        isLoading={isLoading}
+      />
+
+      <ModalAddSubfolder
+        showModal={showModalAddSubfolder}
+        closeModal={handleModalAddSubfolderClose}
+        onSubmit={handleSubmit}
+        onChange={event => setSubfolderName(event.target.value)}
+        subfolderName={subfolderName}
         isLoading={isLoading}
       />
 

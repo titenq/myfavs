@@ -7,6 +7,10 @@ export interface IModalAddFolder {
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
+export interface IModalAddSubfolder extends Omit<IModalAddFolder, 'folderName'> {
+  subfolderName: string;
+}
+
 export interface IModalAddLink {
   showModal: boolean;
   url: string;
