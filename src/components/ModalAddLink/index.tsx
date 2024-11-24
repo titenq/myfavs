@@ -1,10 +1,27 @@
+import { useEffect, useState } from 'react';
+
 import { Button, Form, Modal } from 'react-bootstrap';
 
 import styles from '@/components/ModalAddLink/ModalAddLink.module.css';
 import { IModalAddLink } from '@/interfaces/modalInterface';
 
 const ModalAddLink = (props: IModalAddLink) => {
+  const [showLoadingMessage, setShowLoadingMessage] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (props.isLoading) {
+      const timer = setTimeout(() => {
+        setShowLoadingMessage(true);
+      }, 1000);
+      
+      return () => clearTimeout(timer);
+    } else {
+      setShowLoadingMessage(false);
+    }
+  }, [props.isLoading]);
+  
   return (
+  
     <Modal show={props.showModal} onHide={props.closeModal}>
       <Modal.Header closeButton>
         <Modal.Title className={styles.modal_title}>adicionar link</Modal.Title>
@@ -18,12 +35,12 @@ const ModalAddLink = (props: IModalAddLink) => {
               type="text"
               name="url"
               onChange={props.onChange}
-              value={props.url}
+              value={props.url.toLowerCase()}
             />
           </Form.Group>
 
           <Form.Group controlId="description" className='mt-3'>
-            <Form.Label>*descrição:</Form.Label>
+            <Form.Label>descrição:</Form.Label>
             <Form.Control
               className={styles.input}
               type="text"
@@ -69,7 +86,10 @@ const ModalAddLink = (props: IModalAddLink) => {
               type='submit'
               disabled={props.isLoading}
             >
-              {props.isLoading ? 'salvando...' : 'salvar'}
+              {props.isLoading
+                ? (showLoadingMessage ? 'gerando screenshot...' : 'salvando...')
+                : 'salvar'
+              }
             </Button>
           </Modal.Footer>
         </Form>

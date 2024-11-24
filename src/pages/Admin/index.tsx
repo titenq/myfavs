@@ -20,6 +20,8 @@ import createLink from '@/api/userFolders/createLink';
 import noScreenshot from '@/assets/img/no-screenshot.webp';
 import ModalAddSubfolder from '@/components/ModalAddSubfolder';
 import createUserSubfolder from '@/api/userFolders/createUserSubfolder';
+import formatUrl from '@/helpers/formatUrl';
+import { urlValidator } from '@/helpers/validators';
 
 const Admin = () => {
   const { user } = useContext(AuthContext);
@@ -115,6 +117,11 @@ const Admin = () => {
     });
   };
 
+  const handleShowSubfolderLinks = (folderId: string, subfolderName: string) => {
+    console.log(folderId);
+    console.log(subfolderName);
+  };
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -200,6 +207,16 @@ const Admin = () => {
         return;
       }
 
+      addLinkValues.url = formatUrl(addLinkValues.url);
+
+      if (!urlValidator(addLinkValues.url)) {
+        setErrorMessage('url inválida');
+        setShowModalError(true);
+        setIsLoading(false);
+
+        return;
+      }
+
       if (!addLinkValues.isPrivate) {
         setErrorMessage('marque se o link é público ou privado');
         setShowModalError(true);
@@ -249,7 +266,7 @@ const Admin = () => {
 
               <FaFolderPlus
                 size={22}
-                className={styles.add_folder_icon}
+                className={styles.cursor_pointer}
                 onClick={handleAddFolder}
               />
             </div>
@@ -273,52 +290,61 @@ const Admin = () => {
           </aside>
 
           <main className={styles.main_content}>
-            <div className={styles.folder_name}>{userFolderName}</div>
+            <h2 className={styles.folder_name}>{userFolderName}</h2>
 
             {userFolders.map(folder => (
               openFolderId === folder._id && (
-                <div key={folder._id} className={styles.folder_content}>
-                  {folder?.links && folder?.links?.length > 0 && folder?.links.map(link => (
-                    <div key={link._id} className={styles.links_container}>
-                      {link?.picture ? (
-                        <Image
-                          src={`http://localhost:3300${link?.picture}`}
-                          alt='screenshot'
-                          crossOrigin="anonymous"
-                          className={styles.screenshot}
-                        />
-                      ): (
-                        <Image
-                          src={noScreenshot}
-                          alt='no screenshot'
-                          className={styles.screenshot}
-                        />
-                      )}
-
-                      <div className={styles.link_container}>
-                        {link?.isPrivate && (
-                          <FaLock size={14} />
+                <div key={folder._id}>
+                  <div className={styles.folder_content}>
+                    {folder?.links && folder?.links?.length > 0 && folder?.links.map(link => (
+                      <div key={link._id} className={styles.links_container}>
+                        {link?.picture ? (
+                          <Image
+                            src={`http://localhost:3300${link?.picture}`}
+                            alt='screenshot'
+                            crossOrigin="anonymous"
+                            className={styles.screenshot}
+                          />
+                        ): (
+                          <Image
+                            src={noScreenshot}
+                            alt='no screenshot'
+                            className={styles.screenshot}
+                          />
                         )}
-                        <a
-                          href={link.url}
-                          target='_blank'
-                          rel='noopener noreferrer'
-                          className={styles.link_url}
-                        >
-                          {link.url}
-                        </a>
-                      </div>
 
-                      {link?.description && (
-                        <div className={styles.link_description}>{link.description}</div>
-                      )}
-                    </div>
-                  ))}
-                  
+                        <div className={styles.link_container}>
+                          {link?.isPrivate && (
+                            <FaLock size={14} />
+                          )}
+                          <a
+                            href={link.url}
+                            target='_blank'
+                            rel='noopener noreferrer'
+                            className={styles.link_url}
+                          >
+                            {link.url}
+                          </a>
+                        </div>
+
+                        {link?.description && (
+                          <h2 className={styles.link_description}>{link.description}</h2>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+
                   {folder?.subfolders && folder?.subfolders?.length > 0 && (
                     <div className={styles.subfolders_container}>
                       {folder?.subfolders.map(subfolder => (
-                        <div key={subfolder.name}>{subfolder.name}</div>
+                        <div key={subfolder.name} className={styles.subfolder_icon_container}>
+                          <FcFolder
+                            size={34}
+                            className={styles.cursor_pointer}
+                            onClick={() => handleShowSubfolderLinks(folder._id, subfolder.name)}
+                          />
+                          <h2 className={styles.link_description}>{subfolder.name}</h2>
+                        </div>
                       ))}
                     </div>
                   )}

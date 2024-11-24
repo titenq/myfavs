@@ -1,4 +1,4 @@
-const passwordValidator = (password: string) => { 
+const passwordValidator = (password: string): { error: boolean, message: string } => { 
   if (password.length < 8) {
     return {
       error: true,
@@ -47,7 +47,7 @@ const passwordValidator = (password: string) => {
   };
 };
 
-const emailValidator = (email: string) => {
+const emailValidator = (email: string): boolean => {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return false;
   }
@@ -55,4 +55,14 @@ const emailValidator = (email: string) => {
   return true;
 };
 
-export { passwordValidator, emailValidator };
+const urlValidator = (url: string): boolean => {
+  const urlRegex = /^(https?:\/\/)?([a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)+)(:\d+)?(\/[^\s]*)?$/;
+
+  return urlRegex.test(url);
+};
+
+export {
+  passwordValidator,
+  emailValidator,
+  urlValidator
+};
