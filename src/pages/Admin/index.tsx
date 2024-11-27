@@ -2,10 +2,8 @@ import { useContext, useEffect, useState } from 'react';
 
 import { Image } from 'react-bootstrap';
 import { FcFolder, FcOpenedFolder } from 'react-icons/fc';
-import { FaFolderPlus, FaLink, FaRegTrashCan } from 'react-icons/fa6';
-import { FaRegEdit, FaLock } from 'react-icons/fa';
-import { IoCloseCircleSharp } from 'react-icons/io5';
-import { LuFolderPlus } from 'react-icons/lu';
+import { FaFolderPlus } from 'react-icons/fa6';
+import { FaLock } from 'react-icons/fa';
 
 import styles from '@/pages/Admin/Admin.module.css';
 import AuthContext from '@/context/AuthContext';
@@ -22,6 +20,8 @@ import ModalAddSubfolder from '@/components/ModalAddSubfolder';
 import createUserSubfolder from '@/api/userFolders/createUserSubfolder';
 import formatUrl from '@/helpers/formatUrl';
 import { urlValidator } from '@/helpers/validators';
+import ContextMenu from '@/components/ContextMenu';
+import ContextMenuSubfolder from '@/components/ContextMenuSubfolder';
 
 const Admin = () => {
   const { user } = useContext(AuthContext);
@@ -48,6 +48,9 @@ const Admin = () => {
   const [subfolderName, setSubfolderName] = useState<string>('');
   const [addSubfolderId, setAddSubfolderId] = useState<string | null>(null);
   const [showModalAddSubfolder, setShowModalAddSubfolder] = useState<boolean>(false);
+
+  const [subfolderContextMenuVisible, setSubfolderContextMenuVisible] = useState<boolean>(false);
+  const [subfolderContextMenuPosition, setSubfolderContextMenuPosition] = useState({ x: 0, y: 0 });
 
   const handleModalErrorClose = () => setShowModalError(false);
   const handleModalAddFolderClose = () => setShowModalAddFolder(false);
@@ -122,6 +125,35 @@ const Admin = () => {
     console.log(subfolderName);
   };
 
+  const handleSubfolderContextMenu = (
+    event: React.MouseEvent<HTMLDivElement>,
+    folderId: string,
+    subfolderName: string
+  ) => {
+    event.preventDefault();
+
+    setSubfolderContextMenuVisible(true);
+    setSubfolderContextMenuPosition({ x: event.pageX + 50, y: event.pageY - 25 });
+    setActiveFolder(folderId);
+    setSubfolderName(subfolderName);
+
+    console.log(folderId, subfolderName);
+  };
+
+  const handleCloseContextMenuSubfolder = () => {
+    setSubfolderContextMenuVisible(false);
+    setActiveFolder(null);
+    setSubfolderName('');
+  };
+
+  const handleSubfolderAddLink = (folderId: string, subfolderName: string) => {
+    setAction(Actions.ADD_LINK);
+    setAddLinkFolderId(folderId);
+    setShowModalAddLink(true);
+
+    console.log(folderId, subfolderName);
+  };
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -137,7 +169,7 @@ const Admin = () => {
       }
 
       const foldersName = userFolders.map(folder => folder.name);
-      
+
       if (foldersName.includes(folderName)) {
         setErrorMessage('Já existe uma pasta com esse nome');
         setShowModalError(true);
@@ -172,7 +204,7 @@ const Admin = () => {
       }
 
       const subfoldersName = userFolders.flatMap(folder => folder.subfolders?.map(subfolder => subfolder.name) ?? []);
-      
+
       if (subfoldersName.includes(subfolderName)) {
         setErrorMessage('Já existe uma subpasta com esse nome');
         setShowModalError(true);
@@ -295,6 +327,29 @@ const Admin = () => {
             {userFolders.map(folder => (
               openFolderId === folder._id && (
                 <div key={folder._id}>
+                  {folder?.subfolders && folder?.subfolders?.length > 0 && (
+                    <div className={styles.subfolders_container}>
+                      {folder?.subfolders.map(subfolder => (
+                        <div
+                          key={subfolder.name}
+                          className={styles.subfolder_icon_container}
+                          onContextMenu={(event: React.MouseEvent<HTMLHeadingElement>) => handleSubfolderContextMenu(event, folder._id, subfolder.name)}
+                        >
+                          <FcFolder
+                            size={34}
+                            className={styles.cursor_pointer}
+                            onClick={() => handleShowSubfolderLinks(folder._id, subfolder.name)}
+                          />
+                          <h2 
+                            className={styles.link_description}
+                          >
+                            {subfolder.name}
+                          </h2>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
                   <div className={styles.folder_content}>
                     {folder?.links && folder?.links?.length > 0 && folder?.links.map(link => (
                       <div key={link._id} className={styles.links_container}>
@@ -305,7 +360,7 @@ const Admin = () => {
                             crossOrigin="anonymous"
                             className={styles.screenshot}
                           />
-                        ): (
+                        ) : (
                           <Image
                             src={noScreenshot}
                             alt='no screenshot'
@@ -333,73 +388,31 @@ const Admin = () => {
                       </div>
                     ))}
                   </div>
-
-                  {folder?.subfolders && folder?.subfolders?.length > 0 && (
-                    <div className={styles.subfolders_container}>
-                      {folder?.subfolders.map(subfolder => (
-                        <div key={subfolder.name} className={styles.subfolder_icon_container}>
-                          <FcFolder
-                            size={34}
-                            className={styles.cursor_pointer}
-                            onClick={() => handleShowSubfolderLinks(folder._id, subfolder.name)}
-                          />
-                          <h2 className={styles.link_description}>{subfolder.name}</h2>
-                        </div>
-                      ))}
-                    </div>
-                  )}
                 </div>
               )
             ))}
 
             {userFolders.map(folder => (
               activeFolder === folder._id && contextMenuVisible && (
-                <div
-                  key={folder._id}
-                  className={styles.context_menu_container}
-                  style={{
-                    top: contextMenuPosition.y,
-                    left: contextMenuPosition.x
-                  }}
-                >
-                  <div className={styles.context_menu_close_icon}>
-                    <IoCloseCircleSharp size={24} onClick={handleCloseContextMenu} />
-                  </div>
+                <ContextMenu
+                  folder={folder}
+                  contextMenuPosition={contextMenuPosition}
+                  handleCloseContextMenu={handleCloseContextMenu}
+                  handleAddSubfolder={handleAddSubfolder}
+                  handleAddLink={handleAddLink}
+                />
+              )
+            ))}
 
-                  <div className={styles.context_menu_options}>
-                    <div
-                      className={styles.context_menu_option}
-                      onClick={() => handleAddSubfolder(folder._id)}
-                    >
-                      <LuFolderPlus size={20} />
-                      adicionar subpasta na pasta {folder.name}
-                    </div>
-
-                    <div
-                      className={styles.context_menu_option}
-                      onClick={() => handleAddLink(folder._id)}
-                    >
-                      <FaLink size={18} />
-                      adicionar link na pasta {folder.name}
-                    </div>
-
-                    <div
-                      className={styles.context_menu_option}
-                      onClick={() => alert(`Editando a Div ${folder._id}`)}
-                    >
-                      <FaRegEdit size={18} />
-                      editar o nome da pasta {folder.name}
-                    </div>
-
-                    <div
-                      className={styles.context_menu_option}
-                      onClick={() => alert(`Deletando a Div ${folder._id}`)}
-                    >
-                      <FaRegTrashCan size={18} />
-                      deletar pasta {folder.name}
-                    </div>
-                  </div>
-                </div>
+            {userFolders.map(folder => (
+              activeFolder === folder._id && subfolderContextMenuVisible && (
+                <ContextMenuSubfolder
+                  folder={folder}
+                  subfolderName={subfolderName}
+                  subfolderContextMenuPosition={subfolderContextMenuPosition}
+                  handleCloseContextMenuSubfolder={handleCloseContextMenuSubfolder}
+                  handleSubfolderAddLink={handleSubfolderAddLink}
+                />
               )
             ))}
           </main>

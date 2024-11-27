@@ -35,36 +35,6 @@
   cursor: pointer;
 }
 
-.context_menu_container {
-  position: absolute;
-  background-color: var(--color);
-  color: var(--background-color);
-  box-shadow: 0 0 5px var(--nav-color);
-  z-index: 1000;
-}
-
-.context_menu_close_icon {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.context_menu_options {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  flex-direction: column;
-  gap: 5px;
-  padding: 0 10px 10px 10px;
-}
-
-.context_menu_option {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 5px;
-  cursor: pointer;
-}
-
 .layout_container {
   display: grid;
   grid-template-columns: 200px 1fr;
@@ -138,7 +108,7 @@
   display: flex;
   flex-direction: row;
   gap: 20px;
-  margin-top: 10px;
+  margin: 10px 0;
 }
 
 .subfolder_icon_container {
