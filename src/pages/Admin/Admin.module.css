@@ -85,6 +85,9 @@
 .link_url {
   color: var(--white);
   font-size: 0.8rem;
+  word-break: break-all;
+  white-space: normal;
+  overflow-wrap: break-word;
 }
 
 .link_description {
