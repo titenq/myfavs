@@ -1,9 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 
-import { Image } from 'react-bootstrap';
 import { FcFolder, FcOpenedFolder } from 'react-icons/fc';
 import { FaFolderPlus } from 'react-icons/fa6';
-import { FaLock } from 'react-icons/fa';
 
 import styles from '@/pages/Admin/Admin.module.css';
 import AuthContext from '@/context/AuthContext';
@@ -15,13 +13,13 @@ import createUserFolder from '@/api/userFolders/createUserFolder';
 import ModalAddLink from '@/components/ModalAddLink';
 import { Actions } from '@/enums/actions';
 import createLink from '@/api/userFolders/createLink';
-import noScreenshot from '@/assets/img/no-screenshot.webp';
 import ModalAddSubfolder from '@/components/ModalAddSubfolder';
 import createUserSubfolder from '@/api/userFolders/createUserSubfolder';
 import formatUrl from '@/helpers/formatUrl';
 import { urlValidator } from '@/helpers/validators';
 import ContextMenu from '@/components/ContextMenu';
 import ContextMenuSubfolder from '@/components/ContextMenuSubfolder';
+import CardLink from '@/components/CardLink';
 
 const Admin = () => {
   const { user } = useContext(AuthContext);
@@ -352,40 +350,7 @@ const Admin = () => {
 
                   <div className={styles.folder_content}>
                     {folder?.links && folder?.links?.length > 0 && folder?.links.map(link => (
-                      <div key={link._id} className={styles.links_container}>
-                        {link?.picture ? (
-                          <Image
-                            src={`http://localhost:3300${link?.picture}`}
-                            alt='screenshot'
-                            crossOrigin="anonymous"
-                            className={styles.screenshot}
-                          />
-                        ) : (
-                          <Image
-                            src={noScreenshot}
-                            alt='no screenshot'
-                            className={styles.screenshot}
-                          />
-                        )}
-
-                        <div className={styles.link_container}>
-                          {link?.isPrivate && (
-                            <FaLock size={14} />
-                          )}
-                          <a
-                            href={link.url}
-                            target='_blank'
-                            rel='noopener noreferrer'
-                            className={styles.link_url}
-                          >
-                            {link.url}
-                          </a>
-                        </div>
-
-                        {link?.description && (
-                          <h2 className={styles.link_description}>{link.description}</h2>
-                        )}
-                      </div>
+                      <CardLink key={link._id} link={link} />
                     ))}
                   </div>
                 </div>
@@ -395,6 +360,7 @@ const Admin = () => {
             {userFolders.map(folder => (
               activeFolder === folder._id && contextMenuVisible && (
                 <ContextMenu
+                  key={folder._id}
                   folder={folder}
                   contextMenuPosition={contextMenuPosition}
                   handleCloseContextMenu={handleCloseContextMenu}
@@ -407,6 +373,7 @@ const Admin = () => {
             {userFolders.map(folder => (
               activeFolder === folder._id && subfolderContextMenuVisible && (
                 <ContextMenuSubfolder
+                  key={folder._id}
                   folder={folder}
                   subfolderName={subfolderName}
                   subfolderContextMenuPosition={subfolderContextMenuPosition}

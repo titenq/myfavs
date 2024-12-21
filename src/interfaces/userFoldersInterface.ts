@@ -21,3 +21,7 @@ export interface IUserFolder {
   folders: IFolder[];
   createdAt: Date;
 }
+
+export interface ICardLinkProps {
+  link: ILinkBody;
+}
