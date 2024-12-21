@@ -166,6 +166,14 @@ const Admin = () => {
         return;
       }
 
+      if (folderName?.length > 16) {
+        setErrorMessage('o nome da pasta deve ter no máximo 16 caracteres');
+        setShowModalError(true);
+        setIsLoading(false);
+
+        return;
+      }
+
       const foldersName = userFolders.map(folder => folder.name);
 
       if (foldersName.includes(folderName)) {
@@ -195,6 +203,14 @@ const Admin = () => {
     if (action === Actions.ADD_SUBFOLDER && user?._id && addSubfolderId) {
       if (!subfolderName) {
         setErrorMessage('nome da subpasta é obrigatório');
+        setShowModalError(true);
+        setIsLoading(false);
+
+        return;
+      }
+
+      if (subfolderName?.length > 16) {
+        setErrorMessage('o nome da subpasta deve ter no máximo 16 caracteres');
         setShowModalError(true);
         setIsLoading(false);
 
