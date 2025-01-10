@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 
+import { Container } from 'react-bootstrap';
 import { FcFolder, FcOpenedFolder } from 'react-icons/fc';
 import { FaFolderPlus } from 'react-icons/fa6';
 
@@ -301,7 +302,7 @@ const Admin = () => {
   };
 
   return (
-    <div className={styles.container} onClick={handleCloseContextMenu}>
+    <Container className={styles.container} onClick={handleCloseContextMenu}>
       {isLoading && <p>Carregando as pastas do usuário...</p>}
 
       {userFolders && (
@@ -436,7 +437,7 @@ const Admin = () => {
         isPrivate={addLinkValues?.isPrivate}
         description={addLinkValues?.description}
       />
-    </div>
+    </Container>
   );
 };
 
