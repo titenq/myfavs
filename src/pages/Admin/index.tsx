@@ -6,7 +6,7 @@ import { FaFolderPlus } from 'react-icons/fa6';
 
 import styles from '@/pages/Admin/Admin.module.css';
 import AuthContext from '@/context/AuthContext';
-import { IFolder } from '@/interfaces/userFoldersInterface';
+import { IFolder, ILinkBody } from '@/interfaces/userFoldersInterface';
 import getUserFoldersByUserId from '@/api/userFolders/getUserFoldersByUserId';
 import ModalError from '@/components/ModalError';
 import ModalAddFolder from '@/components/ModalAddFolder';
@@ -21,6 +21,7 @@ import { urlValidator } from '@/helpers/validators';
 import ContextMenu from '@/components/ContextMenu';
 import ContextMenuSubfolder from '@/components/ContextMenuSubfolder';
 import CardLink from '@/components/CardLink';
+import createLinkSubfolder from '@/api/userFolders/createLinkSubfolder';
 
 const Admin = () => {
   const { user } = useContext(AuthContext);
@@ -50,6 +51,9 @@ const Admin = () => {
 
   const [subfolderContextMenuVisible, setSubfolderContextMenuVisible] = useState<boolean>(false);
   const [subfolderContextMenuPosition, setSubfolderContextMenuPosition] = useState({ x: 0, y: 0 });
+
+  const [activeSubfolderName, setActiveSubfolderName] = useState<string>('');
+  const [activeSubfolderLinks, setActiveSubfolderLinks] = useState<ILinkBody[]>([]);
 
   const handleModalErrorClose = () => setShowModalError(false);
   const handleModalAddFolderClose = () => setShowModalAddFolder(false);
@@ -120,8 +124,11 @@ const Admin = () => {
   };
 
   const handleShowSubfolderLinks = (folderId: string, subfolderName: string) => {
-    console.log(folderId);
-    console.log(subfolderName);
+    const folder = userFolders.find(folder => folder._id === folderId);
+    const subfolder = folder?.subfolders?.find(sub => sub.name === subfolderName);
+
+    setActiveSubfolderName(activeSubfolderName === subfolderName ? '' : subfolderName);
+    setActiveSubfolderLinks(subfolder?.links || []);
   };
 
   const handleSubfolderContextMenu = (
@@ -273,30 +280,54 @@ const Admin = () => {
       }
 
       const folder = userFolders.find(folder => folder._id === addLinkFolderId);
-      const urls = folder?.links?.map(item => item.url) || [];
 
-      if (urls.includes(addLinkValues.url)) {
-        setErrorMessage('Já existe um link com essa URL');
-        setShowModalError(true);
-        setIsLoading(false);
+      if (subfolderName) {
+        const subfolder = folder?.subfolders?.find(sub => sub.name === subfolderName);
+        const subfoldersUrls = subfolder?.links?.map(item => item.url) || [];
 
-        return;
-      }
+        if (subfoldersUrls.includes(addLinkValues.url)) {
+          setErrorMessage('Já existe um link com essa URL nesta subpasta');
+          setShowModalError(true);
+          setIsLoading(false);
+          return;
+        }
 
-      const response = await createLink(user._id, addLinkValues, addLinkFolderId);
+        const response = await createLinkSubfolder(user._id, addLinkValues, addLinkFolderId, subfolderName);
 
-      if ('error' in response) {
-        setErrorMessage(response.message);
-        setShowModalError(true);
-        setIsLoading(false);
+        if ('error' in response) {
+          setErrorMessage(response.message);
+          setShowModalError(true);
+          setIsLoading(false);
 
-        return;
+          return;
+        }
+      } else {
+        const urls = folder?.links?.map(item => item.url) || [];
+
+        if (urls.includes(addLinkValues.url)) {
+          setErrorMessage('Já existe um link com essa URL');
+          setShowModalError(true);
+          setIsLoading(false);
+
+          return;
+        }
+
+        const response = await createLink(user._id, addLinkValues, addLinkFolderId);
+
+        if ('error' in response) {
+          setErrorMessage(response.message);
+          setShowModalError(true);
+          setIsLoading(false);
+
+          return;
+        }
       }
 
       setIsLoading(false);
       setShowModalAddLink(false);
       setAddLinkValues({ url: '', isPrivate: false, description: '' });
       setAddLinkFolderId(null);
+      setSubfolderName('');
       setIsRefresh(!isRefresh);
     }
   };
@@ -337,7 +368,9 @@ const Admin = () => {
           </aside>
 
           <main className={styles.main_content}>
-            <h2 className={styles.folder_name}>{userFolderName}</h2>
+            <h2 className={styles.folder_name}>
+              {userFolderName}{activeSubfolderName && (` | ${activeSubfolderName}`)}
+            </h2>
 
             {userFolders.map(folder => (
               openFolderId === folder._id && (
@@ -365,14 +398,24 @@ const Admin = () => {
                     </div>
                   )}
 
-                  <div className={styles.folder_content}>
-                    {folder?.links && folder?.links?.length > 0 && folder?.links.map(link => (
-                      <CardLink key={link._id} link={link} />
-                    ))}
-                  </div>
+                  {!activeSubfolderName && (
+                    <div className={styles.folder_content}>
+                      {folder?.links && folder?.links?.length > 0 && folder?.links.map(link => (
+                        <CardLink key={link._id} link={link} />
+                      ))}
+                    </div>
+                  )}
                 </div>
               )
             ))}
+
+            {activeSubfolderName && (
+              <div className={styles.folder_content}>
+                {activeSubfolderLinks.map(link => (
+                  <CardLink key={link.url} link={link} />
+                ))}
+              </div>
+            )}
 
             {userFolders.map(folder => (
               activeFolder === folder._id && contextMenuVisible && (

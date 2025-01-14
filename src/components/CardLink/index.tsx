@@ -9,18 +9,32 @@ const CardLink = (props: ICardLinkProps) => {
   return (
     <div className={styles.links_container}>
       {props.link?.picture ? (
-        <Image
-          src={`http://localhost:3300${props.link?.picture}`}
-          alt='screenshot'
-          crossOrigin="anonymous"
-          className={styles.screenshot}
-        />
+        <a
+          href={props.link.url}
+          target='_blank'
+          rel='noopener noreferrer'
+          className={styles.link_url}
+        >
+          <Image
+            src={`http://localhost:3300${props.link?.picture}`}
+            alt='screenshot'
+            crossOrigin="anonymous"
+            className={styles.screenshot}
+          />
+        </a>
       ) : (
-        <Image
-          src={noScreenshot}
-          alt='no screenshot'
-          className={styles.screenshot}
-        />
+        <a
+          href={props.link.url}
+          target='_blank'
+          rel='noopener noreferrer'
+          className={styles.link_url}
+        >
+          <Image
+            src={noScreenshot}
+            alt='no screenshot'
+            className={styles.screenshot}
+          />
+        </a>
       )}
 
       <div className={styles.link_container}>

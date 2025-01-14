@@ -16,7 +16,11 @@ const ContextMenuSubfolder = (props: IContextMenuSubfolderProps) => {
       }}
     >
       <div className={styles.context_menu_close_icon}>
-        <IoCloseCircleSharp size={24} onClick={props.handleCloseContextMenuSubfolder} />
+        <IoCloseCircleSharp
+          size={24}
+          onClick={props.handleCloseContextMenuSubfolder}
+          style={{ cursor: 'pointer' }}
+        />
       </div>
 
       <div className={styles.context_menu_options}>
@@ -25,7 +29,7 @@ const ContextMenuSubfolder = (props: IContextMenuSubfolderProps) => {
           onClick={() => props.handleSubfolderAddLink(props.folder._id, props.subfolderName)}
         >
           <FaLink size={18} />
-          adicionar link na pasta {props.folder.name}
+          adicionar link na subpasta {props.subfolderName}
         </div>
 
         <div
@@ -33,7 +37,7 @@ const ContextMenuSubfolder = (props: IContextMenuSubfolderProps) => {
           onClick={() => alert(`Editando a Div ${props.folder._id}`)}
         >
           <FaRegEdit size={18} />
-          editar o nome da pasta {props.folder.name}
+          editar o nome da subpasta {props.subfolderName}
         </div>
 
         <div
@@ -41,7 +45,7 @@ const ContextMenuSubfolder = (props: IContextMenuSubfolderProps) => {
           onClick={() => alert(`Deletando a Div ${props.folder._id}`)}
         >
           <FaRegTrashCan size={18} />
-          deletar pasta {props.folder.name}
+          deletar subpasta {props.subfolderName}
         </div>
       </div>
     </div>

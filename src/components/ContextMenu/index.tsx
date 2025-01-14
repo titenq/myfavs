@@ -17,7 +17,11 @@ const ContextMenu = (props: IContextMenuProps) => {
       }}
     >
       <div className={styles.context_menu_close_icon}>
-        <IoCloseCircleSharp size={24} onClick={props.handleCloseContextMenu} />
+        <IoCloseCircleSharp
+          size={24}
+          onClick={props.handleCloseContextMenu}
+          style={{ cursor: 'pointer' }}
+        />
       </div>
 
       <div className={styles.context_menu_options}>
