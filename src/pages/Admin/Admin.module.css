@@ -82,3 +82,15 @@
   font-size: 1rem;
   margin: 0;
 }
+
+.subfolder_list {
+  margin-left: 20px;
+}
+
+.subfolder_item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px;
+  cursor: pointer;
+}

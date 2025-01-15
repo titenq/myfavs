@@ -84,6 +84,8 @@ const Admin = () => {
   const handleFolderClick = (folderId: string, folderName: string) => {
     setOpenFolderId(openFolderId === folderId ? '' : folderId);
     setUserFolderName(openFolderId === folderId ? '' : folderName);
+    setActiveSubfolderName('');
+    setActiveSubfolderLinks([]);
   };
 
   const handleAddFolder = () => {
@@ -142,8 +144,6 @@ const Admin = () => {
     setSubfolderContextMenuPosition({ x: event.pageX + 50, y: event.pageY - 25 });
     setActiveFolder(folderId);
     setSubfolderName(subfolderName);
-
-    console.log(folderId, subfolderName);
   };
 
   const handleCloseContextMenuSubfolder = () => {
@@ -155,9 +155,8 @@ const Admin = () => {
   const handleSubfolderAddLink = (folderId: string, subfolderName: string) => {
     setAction(Actions.ADD_LINK);
     setAddLinkFolderId(folderId);
+    setSubfolderName(subfolderName);
     setShowModalAddLink(true);
-
-    console.log(folderId, subfolderName);
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -301,6 +300,8 @@ const Admin = () => {
 
           return;
         }
+
+        setActiveSubfolderLinks([...activeSubfolderLinks, addLinkValues]);
       } else {
         const urls = folder?.links?.map(item => item.url) || [];
 
@@ -350,19 +351,46 @@ const Admin = () => {
             </div>
 
             {userFolders.map(folder => (
-              <div
-                key={folder._id}
-                className={styles.folder_container}
-                onClick={() => handleFolderClick(folder._id, folder.name)}
-                onContextMenu={event => handleContextMenu(event, folder._id)}
-              >
-                {openFolderId === folder._id ? (
-                  <FcOpenedFolder size={34} />
-                ) : (
-                  <FcFolder size={34} />
-                )}
+              <div key={folder._id}>
+                <div
+                  className={styles.folder_container}
+                  onClick={() => handleFolderClick(folder._id, folder.name)}
+                  onContextMenu={event => handleContextMenu(event, folder._id)}
+                >
+                  {openFolderId === folder._id ? (
+                    <FcOpenedFolder size={34} />
+                  ) : (
+                    <FcFolder size={34} />
+                  )}
+                  <span>{folder.name}</span>
+                </div>
 
-                <span>{folder.name}</span>
+                {openFolderId === folder._id && folder?.subfolders && (
+                  <div className={styles.subfolder_list}>
+                    {folder.subfolders.map(subfolder => (
+                      <div
+                        key={subfolder.name}
+                        className={styles.subfolder_item}
+                        onClick={() => handleShowSubfolderLinks(folder._id, subfolder.name)}
+                      >
+                        {activeSubfolderName === subfolder.name ? (
+                          <FcOpenedFolder
+                            size={28}
+                            className={styles.cursor_pointer}
+                            onClick={() => handleShowSubfolderLinks(folder._id, subfolder.name)}
+                          />
+                        ) : (
+                          <FcFolder
+                            size={28}
+                            className={styles.cursor_pointer}
+                            onClick={() => handleShowSubfolderLinks(folder._id, subfolder.name)}
+                          />
+                        )}
+                        <span>{subfolder.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             ))}
           </aside>
@@ -383,11 +411,19 @@ const Admin = () => {
                           className={styles.subfolder_icon_container}
                           onContextMenu={(event: React.MouseEvent<HTMLHeadingElement>) => handleSubfolderContextMenu(event, folder._id, subfolder.name)}
                         >
-                          <FcFolder
-                            size={34}
-                            className={styles.cursor_pointer}
-                            onClick={() => handleShowSubfolderLinks(folder._id, subfolder.name)}
-                          />
+                          {activeSubfolderName === subfolder.name ? (
+                            <FcOpenedFolder
+                              size={28}
+                              className={styles.cursor_pointer}
+                              onClick={() => handleShowSubfolderLinks(folder._id, subfolder.name)}
+                            />
+                          ) : (
+                            <FcFolder
+                              size={28}
+                              className={styles.cursor_pointer}
+                              onClick={() => handleShowSubfolderLinks(folder._id, subfolder.name)}
+                            />
+                          )}
                           <h2 
                             className={styles.link_description}
                           >
