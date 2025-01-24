@@ -120,6 +120,7 @@ const Admin = () => {
   const handleContextMenu = (event: React.MouseEvent<HTMLDivElement>, folderId: string) => {
     event.preventDefault();
 
+    setSubfolderContextMenuVisible(false);
     setContextMenuVisible(true);
     setContextMenuPosition({ x: event.pageX + 50, y: event.pageY - 25 });
     setActiveFolder(folderId);
@@ -164,6 +165,7 @@ const Admin = () => {
   ) => {
     event.preventDefault();
 
+    setContextMenuVisible(false);
     setSubfolderContextMenuVisible(true);
     setSubfolderContextMenuPosition({ x: event.pageX + 50, y: event.pageY - 25 });
     setActiveFolder(folderId);
