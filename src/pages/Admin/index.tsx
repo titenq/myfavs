@@ -6,7 +6,7 @@ import { FaFolderPlus } from 'react-icons/fa6';
 
 import styles from '@/pages/Admin/Admin.module.css';
 import AuthContext from '@/context/AuthContext';
-import { IFolder, ILinkBody } from '@/interfaces/userFoldersInterface';
+import { IDeleteLinkProps, IFolder, ILinkBody } from '@/interfaces/userFoldersInterface';
 import getUserFoldersByUserId from '@/api/userFolders/getUserFoldersByUserId';
 import ModalError from '@/components/ModalError';
 import ModalAddFolder from '@/components/ModalAddFolder';
@@ -22,6 +22,8 @@ import ContextMenu from '@/components/ContextMenu';
 import ContextMenuSubfolder from '@/components/ContextMenuSubfolder';
 import CardLink from '@/components/CardLink';
 import createLinkSubfolder from '@/api/userFolders/createLinkSubfolder';
+import ModalDeleteLink from '@/components/ModalDeleteLink';
+import deleteLink from '@/api/userFolders/deleteLink';
 
 const Admin = () => {
   const { user } = useContext(AuthContext);
@@ -33,6 +35,7 @@ const Admin = () => {
   const [openFolderId, setOpenFolderId] = useState('');
   const [showModalAddFolder, setShowModalAddFolder] = useState<boolean>(false);
   const [showModalAddLink, setShowModalAddLink] = useState<boolean>(false);
+  const [showModalDeleteLink, setShowModalDeleteLink] = useState<boolean>(false);
   const [folderName, setFolderName] = useState<string>('');
   const [isRefresh, setIsRefresh] = useState<boolean>(false);
   const [contextMenuVisible, setContextMenuVisible] = useState<boolean>(false);
@@ -42,6 +45,8 @@ const Admin = () => {
     url: '',
     isPrivate: false,
     description: '',
+    radioSelected: false,
+    picture: ''
   });
   const [addLinkFolderId, setAddLinkFolderId] = useState<string | null>(null);
   const [userFolderName, setUserFolderName] = useState<string>('');
@@ -55,10 +60,17 @@ const Admin = () => {
   const [activeSubfolderName, setActiveSubfolderName] = useState<string>('');
   const [activeSubfolderLinks, setActiveSubfolderLinks] = useState<ILinkBody[]>([]);
 
+  const [deleteLinkId, setDeleteLinkId] = useState<string | null>(null);
+  const [deleteLinkFolderId, setDeleteLinkFolderId] = useState<string | null>(null);
+  const [deleteLinkSubfolderName, setDeleteLinkSubfolderName] = useState<string | null>(null);
+  const [deleteLinkUrl, setDeleteLinkUrl] = useState<string>('');
+  const [deleteLinkPicture, setDeleteLinkPicture] = useState<string | null>(null);
+
   const handleModalErrorClose = () => setShowModalError(false);
   const handleModalAddFolderClose = () => setShowModalAddFolder(false);
   const handleModalAddLinkClose = () => setShowModalAddLink(false);
   const handleModalAddSubfolderClose = () => setShowModalAddSubfolder(false);
+  const handleModalDeleteLinkClose = () => setShowModalDeleteLink(false);
 
   useEffect(() => {
     const getFolders = async () => {
@@ -119,9 +131,21 @@ const Admin = () => {
   };
 
   const handleAddLinkChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+
+    if (name === 'isPrivate') {
+      setAddLinkValues({
+        ...addLinkValues,
+        [name]: value === 'false' ? false : true,
+        radioSelected: true
+      });
+
+      return;
+    }
+
     setAddLinkValues({
       ...addLinkValues,
-      [event.target.name]: event.target.value,
+      [name]: value
     });
   };
 
@@ -157,6 +181,16 @@ const Admin = () => {
     setAddLinkFolderId(folderId);
     setSubfolderName(subfolderName);
     setShowModalAddLink(true);
+  };
+
+  const handleDeleteLink = (deleteLinkProps: IDeleteLinkProps) => {
+    setAction(Actions.DELETE_LINK);
+    setDeleteLinkFolderId(deleteLinkProps.folderId);
+    setDeleteLinkSubfolderName(deleteLinkProps.subfolderName);
+    setDeleteLinkId(deleteLinkProps.linkId);
+    setDeleteLinkUrl(deleteLinkProps.linkUrl);
+    setDeleteLinkPicture(deleteLinkProps.linkPicture);
+    setShowModalDeleteLink(true);
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -251,7 +285,7 @@ const Admin = () => {
       setIsRefresh(!isRefresh);
     }
 
-    if (action === Actions.ADD_LINK && user?._id && addLinkFolderId) {
+    if (action === Actions.ADD_LINK && user?._id) {
       if (!addLinkValues.url) {
         setErrorMessage('url é obrigatório');
         setShowModalError(true);
@@ -270,7 +304,7 @@ const Admin = () => {
         return;
       }
 
-      if (!addLinkValues.isPrivate) {
+      if (!addLinkValues.radioSelected) {
         setErrorMessage('marque se o link é público ou privado');
         setShowModalError(true);
         setIsLoading(false);
@@ -288,10 +322,11 @@ const Admin = () => {
           setErrorMessage('Já existe um link com essa URL nesta subpasta');
           setShowModalError(true);
           setIsLoading(false);
+
           return;
         }
 
-        const response = await createLinkSubfolder(user._id, addLinkValues, addLinkFolderId, subfolderName);
+        const response = await createLinkSubfolder(user._id, addLinkValues, addLinkFolderId!, subfolderName);
 
         if ('error' in response) {
           setErrorMessage(response.message);
@@ -300,6 +335,8 @@ const Admin = () => {
 
           return;
         }
+
+        addLinkValues.picture = response.picture;
 
         setActiveSubfolderLinks([...activeSubfolderLinks, addLinkValues]);
       } else {
@@ -313,7 +350,7 @@ const Admin = () => {
           return;
         }
 
-        const response = await createLink(user._id, addLinkValues, addLinkFolderId);
+        const response = await createLink(user._id, addLinkValues, addLinkFolderId!);
 
         if ('error' in response) {
           setErrorMessage(response.message);
@@ -326,10 +363,47 @@ const Admin = () => {
 
       setIsLoading(false);
       setShowModalAddLink(false);
-      setAddLinkValues({ url: '', isPrivate: false, description: '' });
+      setAddLinkValues({
+        url: '',
+        isPrivate: false,
+        description: '',
+        radioSelected: false,
+        picture: ''
+      });
       setAddLinkFolderId(null);
       setSubfolderName('');
       setIsRefresh(!isRefresh);
+    }
+
+    if (action === Actions.DELETE_LINK) {
+      if (user) {
+        const response = await deleteLink(user._id, {
+          folderId: deleteLinkFolderId,
+          subfolderName: deleteLinkSubfolderName,
+          linkId: deleteLinkId,
+          linkUrl: deleteLinkUrl,
+          linkPicture: deleteLinkPicture,
+        });
+
+        if ('error' in response) {
+          setErrorMessage(response.message);
+          setShowModalError(true);
+          setIsLoading(false);
+
+          return;
+        }
+
+        if (deleteLinkSubfolderName) {
+          const folder = userFolders.find(folder => folder._id === deleteLinkFolderId);
+          const subfolder = folder?.subfolders?.find(sub => sub.name === deleteLinkSubfolderName);
+          
+          setActiveSubfolderLinks(subfolder?.links?.filter(link => link.url !== deleteLinkUrl) || []);
+        }
+        
+        setIsLoading(false);
+        setShowModalDeleteLink(false);
+        setIsRefresh(!isRefresh);
+      }
     }
   };
 
@@ -437,7 +511,17 @@ const Admin = () => {
                   {!activeSubfolderName && (
                     <div className={styles.folder_content}>
                       {folder?.links && folder?.links?.length > 0 && folder?.links.map(link => (
-                        <CardLink key={link._id} link={link} />
+                        <CardLink
+                          key={link._id}
+                          link={link}
+                          onDelete={() => handleDeleteLink({
+                            folderId: folder._id,
+                            subfolderName: null,
+                            linkId: link._id || null,
+                            linkUrl: link.url,
+                            linkPicture: link.picture || null,
+                          })}
+                        />
                       ))}
                     </div>
                   )}
@@ -448,7 +532,17 @@ const Admin = () => {
             {activeSubfolderName && (
               <div className={styles.folder_content}>
                 {activeSubfolderLinks.map(link => (
-                  <CardLink key={link.url} link={link} />
+                  <CardLink
+                    key={link.url}
+                    link={link}
+                    onDelete={() => handleDeleteLink({
+                      folderId: openFolderId,
+                      subfolderName: activeSubfolderName,
+                      linkId: null,
+                      linkUrl: link.url,
+                      linkPicture: link.picture || null
+                    })}
+                  />
                 ))}
               </div>
             )}
@@ -515,6 +609,14 @@ const Admin = () => {
         url={addLinkValues?.url}
         isPrivate={addLinkValues?.isPrivate}
         description={addLinkValues?.description}
+      />
+
+      <ModalDeleteLink
+        deleteLinkUrl={deleteLinkUrl}
+        showModal={showModalDeleteLink}
+        closeModal={handleModalDeleteLinkClose}
+        onSubmit={handleSubmit}
+        isLoading={isLoading}
       />
     </Container>
   );

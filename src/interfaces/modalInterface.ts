@@ -21,3 +21,11 @@ export interface IModalAddLink {
   onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
+
+export interface IModalDeleteLink {
+  showModal: boolean;
+  isLoading: boolean;
+  deleteLinkUrl: string;
+  closeModal: () => void;
+  onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
+}

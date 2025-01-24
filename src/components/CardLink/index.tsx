@@ -1,5 +1,6 @@
 import { Image } from 'react-bootstrap';
 import { FaLock } from 'react-icons/fa';
+import { RiCloseCircleFill } from 'react-icons/ri';
 
 import styles from '@/components/CardLink/CardLink.module.css';
 import noScreenshot from '@/assets/img/no-screenshot.webp';
@@ -8,6 +9,14 @@ import { ICardLinkProps } from '@/interfaces/userFoldersInterface';
 const CardLink = (props: ICardLinkProps) => {
   return (
     <div className={styles.links_container}>
+      <div className={styles.delete_icon}>
+        <RiCloseCircleFill 
+          size={34} 
+          onClick={() => props.onDelete()} 
+          style={{ cursor: 'pointer' }}
+        />
+      </div>
+
       {props.link?.picture ? (
         <a
           href={props.link.url}
