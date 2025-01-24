@@ -446,6 +446,7 @@ const Admin = () => {
                         key={subfolder.name}
                         className={styles.subfolder_item}
                         onClick={() => handleShowSubfolderLinks(folder._id, subfolder.name)}
+                        onContextMenu={(e) => handleSubfolderContextMenu(e, folder._id, subfolder.name)}
                       >
                         {activeSubfolderName === subfolder.name ? (
                           <FcOpenedFolder
