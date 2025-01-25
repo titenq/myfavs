@@ -511,12 +511,10 @@ const Admin = () => {
                 </>
               )}
               
-              {activeSubfolderName && <div>|</div>}
-
-              {activeSubfolderName && <div>{activeSubfolderName}</div>}
-
               {activeSubfolderName && (
                 <>
+                  <div>|</div>
+                  <div>{activeSubfolderName}</div>
                   <TooltipCard
                     id='addLinkSubfolderTooltip'
                     tooltipText={`adicionar link na subpasta ${activeSubfolderName}`}
