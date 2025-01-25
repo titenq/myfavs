@@ -1,8 +1,10 @@
 import { useContext, useEffect, useState } from 'react';
 
-import { Container } from 'react-bootstrap';
+import { Container, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { FcFolder, FcOpenedFolder } from 'react-icons/fc';
-import { FaFolderPlus } from 'react-icons/fa6';
+import { FaFolderPlus, FaLink, FaRegTrashCan } from 'react-icons/fa6';
+import { LuFolderPlus } from 'react-icons/lu';
+import { FaRegEdit } from 'react-icons/fa';
 
 import styles from '@/pages/Admin/Admin.module.css';
 import AuthContext from '@/context/AuthContext';
@@ -473,9 +475,147 @@ const Admin = () => {
           </aside>
 
           <main className={styles.main_content}>
-            <h2 className={styles.folder_name}>
-              {userFolderName}{activeSubfolderName && (` | ${activeSubfolderName}`)}
-            </h2>
+            <div className={styles.folder_name}>
+              {userFolderName}
+
+              {userFolderName && (
+                <>
+                  <OverlayTrigger
+                    placement='top'
+                    delay={{ show: 250, hide: 400 }}
+                    overlay={
+                      <Tooltip id='addSubfolderTooltip' style={{ position: "fixed" }}>
+                        adicionar subpasta na pasta {userFolderName}
+                      </Tooltip>
+                    }
+                  >
+                    <span>
+                      <LuFolderPlus
+                        size={18}
+                        className={styles.cursor_pointer}
+                        onClick={() => handleAddSubfolder(openFolderId)}
+                      />
+                    </span>
+                  </OverlayTrigger>
+
+                  <OverlayTrigger
+                    placement='top'
+                    delay={{ show: 250, hide: 400 }}
+                    overlay={
+                      <Tooltip id='addLinkTooltip' style={{ position: "fixed" }}>
+                        adicionar link na pasta {userFolderName}
+                      </Tooltip>
+                    }
+                  >
+                    <span>
+                      <FaLink
+                        size={18}
+                        className={styles.cursor_pointer}
+                        onClick={() => handleAddLink(openFolderId)}
+                      />
+                    </span>
+                  </OverlayTrigger>
+
+                  <OverlayTrigger
+                    placement='top'
+                    delay={{ show: 250, hide: 400 }}
+                    overlay={
+                      <Tooltip id='editFolderNameTooltip' style={{ position: "fixed" }}>
+                        editar o nome da pasta {userFolderName}
+                      </Tooltip>
+                    }
+                  >
+                    <span>
+                      <FaRegEdit
+                        size={18}
+                        className={styles.cursor_pointer}
+                        onClick={() => alert('Editando a pasta')}
+                      />
+                    </span>
+                  </OverlayTrigger>
+
+                  <OverlayTrigger
+                    placement='top'
+                    delay={{ show: 250, hide: 400 }}
+                    overlay={
+                      <Tooltip id='deleteFolderTooltip' style={{ position: "fixed" }}>
+                        deletar pasta {userFolderName}
+                      </Tooltip>
+                    }
+                  >
+                    <span>
+                      <FaRegTrashCan
+                        size={18}
+                        className={styles.cursor_pointer}
+                        onClick={() => alert('Deletando a pasta')}
+                      />
+                    </span>
+                  </OverlayTrigger>
+                </>
+              )}
+              
+              {activeSubfolderName && <div>|</div>}
+
+              {activeSubfolderName && <div>{activeSubfolderName}</div>}
+
+              {activeSubfolderName && (
+                <>
+                  <OverlayTrigger
+                    placement='top'
+                    delay={{ show: 250, hide: 400 }}
+                    overlay={
+                      <Tooltip id='addLinkSubfolderTooltip' style={{ position: "fixed" }}>
+                        adicionar link na subpasta {activeSubfolderName}
+                      </Tooltip>
+                    }
+                  >
+                    <span>
+                      <FaLink
+                        size={18}
+                        className={styles.cursor_pointer}
+                        onClick={() => handleSubfolderAddLink(openFolderId, activeSubfolderName)}
+                      />
+                    </span>
+                  </OverlayTrigger>
+                  
+                  <OverlayTrigger
+                    placement='top'
+                    delay={{ show: 250, hide: 400 }}
+                    overlay={
+                      <Tooltip id='editSubfolderNameTooltip' style={{ position: "fixed" }}>
+                        editar o nome da subpasta {activeSubfolderName}
+                      </Tooltip>
+                    }
+                  >
+                    <span>
+                      <FaRegEdit
+                        size={18}
+                        className={styles.cursor_pointer}
+                        onClick={() => alert('Editando a subpasta')}
+                      />
+                    </span>
+                  </OverlayTrigger>
+
+                  <OverlayTrigger
+                    placement='top'
+                    delay={{ show: 250, hide: 400 }}
+                    overlay={
+                      <Tooltip id='deleteSubfolderTooltip' style={{ position: "fixed" }}>
+                        deletar subpasta {activeSubfolderName}
+                      </Tooltip>
+                    }
+                  >
+                    <span>
+                      <FaRegTrashCan
+                        size={18}
+                        className={styles.cursor_pointer}
+                        onClick={() => alert('Deletando a subpasta')}
+                      />
+                    </span>
+                  </OverlayTrigger>
+                </>
+              )}
+            </div>
 
             {userFolders.map(folder => (
               openFolderId === folder._id && (

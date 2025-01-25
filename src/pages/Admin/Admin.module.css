@@ -52,8 +52,11 @@
 }
 
 .folder_name {
+  display: flex;
+  align-items: center;
   font-size: 1rem;
   font-weight: bold;
+  gap: 10px;
 }
 
 .folder_content {
