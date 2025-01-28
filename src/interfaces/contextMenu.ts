@@ -10,6 +10,7 @@ export interface IContextMenuProps {
   handleCloseContextMenu: () => void;
   handleAddSubfolder: (folderId: string) => void;
   handleAddLink: (folderId: string) => void;
+  handleEditFolder: (olderFolderName: string, folderId: string) => void;
 }
 
 export interface IContextMenuSubfolderProps {

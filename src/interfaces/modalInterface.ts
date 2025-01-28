@@ -29,3 +29,13 @@ export interface IModalDeleteLink {
   closeModal: () => void;
   onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
 }
+
+export interface IModalEditFolder {
+  showModal: boolean;
+  oldFolderName: string;
+  folderName: string;
+  isLoading: boolean;
+  closeModal: () => void;
+  onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
+  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+}

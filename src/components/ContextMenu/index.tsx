@@ -43,7 +43,7 @@ const ContextMenu = (props: IContextMenuProps) => {
 
         <div
           className={styles.context_menu_option}
-          onClick={() => alert(`Editando a Div ${props.folder._id}`)}
+          onClick={() => props.handleEditFolder(props.folder.name, props.folder._id)}
         >
           <FaRegEdit size={18} />
           editar o nome da pasta {props.folder.name}

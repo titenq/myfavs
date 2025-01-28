@@ -27,6 +27,8 @@ import createLinkSubfolder from '@/api/userFolders/createLinkSubfolder';
 import ModalDeleteLink from '@/components/ModalDeleteLink';
 import deleteLink from '@/api/userFolders/deleteLink';
 import TooltipCard from '@/components/TooltipCard';
+import ModalEditFolder from '@/components/ModalEditFolder/index';
+import editFolder from '@/api/userFolders/editFolder';
 
 const Admin = () => {
   const { user } = useContext(AuthContext);
@@ -39,6 +41,7 @@ const Admin = () => {
   const [showModalAddFolder, setShowModalAddFolder] = useState<boolean>(false);
   const [showModalAddLink, setShowModalAddLink] = useState<boolean>(false);
   const [showModalDeleteLink, setShowModalDeleteLink] = useState<boolean>(false);
+  const [showModalEditFolder, setShowModalEditFolder] = useState<boolean>(false);
   const [folderName, setFolderName] = useState<string>('');
   const [isRefresh, setIsRefresh] = useState<boolean>(false);
   const [contextMenuVisible, setContextMenuVisible] = useState<boolean>(false);
@@ -69,11 +72,16 @@ const Admin = () => {
   const [deleteLinkUrl, setDeleteLinkUrl] = useState<string>('');
   const [deleteLinkPicture, setDeleteLinkPicture] = useState<string | null>(null);
 
+  const [editFolderId, setEditFolderId] = useState<string | null>(null);
+  const [editOldFolderName, setEditOldFolderName] = useState<string>('');
+  const [editFolderName, setEditFolderName] = useState<string>('');
+
   const handleModalErrorClose = () => setShowModalError(false);
   const handleModalAddFolderClose = () => setShowModalAddFolder(false);
   const handleModalAddLinkClose = () => setShowModalAddLink(false);
   const handleModalAddSubfolderClose = () => setShowModalAddSubfolder(false);
   const handleModalDeleteLinkClose = () => setShowModalDeleteLink(false);
+  const handleModalEditFolderClose = () => setShowModalEditFolder(false);
 
   useEffect(() => {
     const getFolders = async () => {
@@ -196,6 +204,13 @@ const Admin = () => {
     setDeleteLinkUrl(deleteLinkProps.linkUrl);
     setDeleteLinkPicture(deleteLinkProps.linkPicture);
     setShowModalDeleteLink(true);
+  };
+
+  const handleEditFolder = (oldFolderName: string, folderId: string) => {
+    setAction(Actions.EDIT_FOLDER);
+    setEditOldFolderName(oldFolderName);
+    setEditFolderId(folderId);
+    setShowModalEditFolder(true);
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -410,6 +425,51 @@ const Admin = () => {
         setIsRefresh(!isRefresh);
       }
     }
+
+    if (action === Actions.EDIT_FOLDER && user?._id && editFolderId) {
+      if (!editFolderName) {
+        setErrorMessage('o nome da pasta é obrigatório');
+        setShowModalError(true);
+        setIsLoading(false);
+
+        return;
+      }
+
+      if (editFolderName?.length > 16) {
+        setErrorMessage('o nome da pasta deve ter no máximo 16 caracteres');
+        setShowModalError(true);
+        setIsLoading(false);
+
+        return;
+      }
+
+      const foldersName = userFolders.map(folder => folder.name);
+
+      if (foldersName.includes(editFolderName)) {
+        setErrorMessage('Já existe uma pasta com esse nome');
+        setShowModalError(true);
+        setIsLoading(false);
+
+        return;
+      }
+
+      const response = await editFolder(user._id, editFolderId, editFolderName);
+
+      if ('error' in response) {
+        setErrorMessage(response.message);
+        setShowModalError(true);
+        setIsLoading(false);
+
+        return;
+      }
+
+      setIsLoading(false);
+      setShowModalEditFolder(false);
+      setEditFolderId(null);
+      setEditFolderName('');
+      setUserFolderName(editFolderName);
+      setIsRefresh(!isRefresh);
+    }
   };
 
   return (
@@ -499,7 +559,7 @@ const Admin = () => {
                     id='editFolderNameTooltip'
                     tooltipText={`editar o nome da pasta ${userFolderName}`}
                     icon={FaRegEdit}
-                    onClick={() => alert('Editando a pasta')}
+                    onClick={() => handleEditFolder(userFolderName, openFolderId)}
                   />
 
                   <TooltipCard
@@ -621,6 +681,7 @@ const Admin = () => {
                   handleCloseContextMenu={handleCloseContextMenu}
                   handleAddSubfolder={handleAddSubfolder}
                   handleAddLink={handleAddLink}
+                  handleEditFolder={handleEditFolder}
                 />
               )
             ))}
@@ -681,6 +742,16 @@ const Admin = () => {
         showModal={showModalDeleteLink}
         closeModal={handleModalDeleteLinkClose}
         onSubmit={handleSubmit}
+        isLoading={isLoading}
+      />
+
+      <ModalEditFolder
+        showModal={showModalEditFolder}
+        closeModal={handleModalEditFolderClose}
+        onSubmit={handleSubmit}
+        onChange={event => setEditFolderName(event.target.value)}
+        folderName={editFolderName}
+        oldFolderName={editOldFolderName}
         isLoading={isLoading}
       />
     </Container>
