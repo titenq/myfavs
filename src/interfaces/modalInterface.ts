@@ -39,3 +39,11 @@ export interface IModalEditFolder {
   onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
+
+export interface IModalDeleteFolder {
+  showModal: boolean;
+  isLoading: boolean;
+  deleteFolderName: string;
+  closeModal: () => void;
+  onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
+}

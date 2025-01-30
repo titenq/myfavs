@@ -29,6 +29,8 @@ import deleteLink from '@/api/userFolders/deleteLink';
 import TooltipCard from '@/components/TooltipCard';
 import ModalEditFolder from '@/components/ModalEditFolder/index';
 import editFolder from '@/api/userFolders/editFolder';
+import ModalDeleteFolder from '@/components/ModalDeleteFolder';
+import deleteFolder from '@/api/userFolders/deleteFolder';
 
 const Admin = () => {
   const { user } = useContext(AuthContext);
@@ -76,12 +78,16 @@ const Admin = () => {
   const [editOldFolderName, setEditOldFolderName] = useState<string>('');
   const [editFolderName, setEditFolderName] = useState<string>('');
 
+  const [deleteFolderId, setDeleteFolderId] = useState<string | null>(null);
+  const [showModalDeleteFolder, setShowModalDeleteFolder] = useState<boolean>(false);
+
   const handleModalErrorClose = () => setShowModalError(false);
   const handleModalAddFolderClose = () => setShowModalAddFolder(false);
   const handleModalAddLinkClose = () => setShowModalAddLink(false);
   const handleModalAddSubfolderClose = () => setShowModalAddSubfolder(false);
   const handleModalDeleteLinkClose = () => setShowModalDeleteLink(false);
   const handleModalEditFolderClose = () => setShowModalEditFolder(false);
+  const handleModalDeleteFolderClose = () => setShowModalDeleteFolder(false);
 
   useEffect(() => {
     const getFolders = async () => {
@@ -211,6 +217,12 @@ const Admin = () => {
     setEditOldFolderName(oldFolderName);
     setEditFolderId(folderId);
     setShowModalEditFolder(true);
+  };
+
+  const handleDeleteFolder = (folderId: string) => {
+    setAction(Actions.DELETE_FOLDER);
+    setDeleteFolderId(folderId);
+    setShowModalDeleteFolder(true);
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -470,6 +482,27 @@ const Admin = () => {
       setUserFolderName(editFolderName);
       setIsRefresh(!isRefresh);
     }
+
+    if (action === Actions.DELETE_FOLDER && user?._id && deleteFolderId) {
+      const response = await deleteFolder(user._id, deleteFolderId);
+
+      if ('error' in response) {
+        setErrorMessage(response.message);
+        setShowModalError(true);
+        setIsLoading(false);
+
+        return;
+      }
+
+      setIsLoading(false);
+      setShowModalDeleteFolder(false);
+      setDeleteFolderId(null);
+      setUserFolderName('');
+      setOpenFolderId('');
+      setActiveSubfolderName('');
+      setActiveSubfolderLinks([]);
+      setIsRefresh(!isRefresh);
+    }
   };
 
   return (
@@ -566,7 +599,7 @@ const Admin = () => {
                     id='deleteFolderTooltip'
                     tooltipText={`deletar pasta ${userFolderName}`}
                     icon={FaRegTrashCan}
-                    onClick={() => alert('Deletando a pasta')}
+                    onClick={() => handleDeleteFolder(openFolderId)}
                   />
                 </>
               )}
@@ -575,6 +608,7 @@ const Admin = () => {
                 <>
                   <div>|</div>
                   <div>{activeSubfolderName}</div>
+
                   <TooltipCard
                     id='addLinkSubfolderTooltip'
                     tooltipText={`adicionar link na subpasta ${activeSubfolderName}`}
@@ -682,6 +716,7 @@ const Admin = () => {
                   handleAddSubfolder={handleAddSubfolder}
                   handleAddLink={handleAddLink}
                   handleEditFolder={handleEditFolder}
+                  handleDeleteFolder={handleDeleteFolder}
                 />
               )
             ))}
@@ -753,6 +788,14 @@ const Admin = () => {
         folderName={editFolderName}
         oldFolderName={editOldFolderName}
         isLoading={isLoading}
+      />
+
+      <ModalDeleteFolder
+        showModal={showModalDeleteFolder}
+        closeModal={handleModalDeleteFolderClose}
+        onSubmit={handleSubmit}
+        isLoading={isLoading}
+        deleteFolderName={userFolderName}
       />
     </Container>
   );

@@ -51,7 +51,7 @@ const ContextMenu = (props: IContextMenuProps) => {
 
         <div
           className={styles.context_menu_option}
-          onClick={() => alert(`Deletando a Div ${props.folder._id}`)}
+          onClick={() => props.handleDeleteFolder(props.folder._id)}
         >
           <FaRegTrashCan size={18} />
           deletar pasta {props.folder.name}
