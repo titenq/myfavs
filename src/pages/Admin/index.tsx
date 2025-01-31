@@ -31,6 +31,8 @@ import ModalEditFolder from '@/components/ModalEditFolder/index';
 import editFolder from '@/api/userFolders/editFolder';
 import ModalDeleteFolder from '@/components/ModalDeleteFolder';
 import deleteFolder from '@/api/userFolders/deleteFolder';
+import ModalEditSubfolder from '@/components/ModalEditSubfolder';
+import editSubfolder from '@/api/userFolders/editSubfolder';
 
 const Admin = () => {
   const { user } = useContext(AuthContext);
@@ -41,9 +43,11 @@ const Admin = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [openFolderId, setOpenFolderId] = useState('');
   const [showModalAddFolder, setShowModalAddFolder] = useState<boolean>(false);
+  const [showModalAddSubfolder, setShowModalAddSubfolder] = useState<boolean>(false);
   const [showModalAddLink, setShowModalAddLink] = useState<boolean>(false);
   const [showModalDeleteLink, setShowModalDeleteLink] = useState<boolean>(false);
   const [showModalEditFolder, setShowModalEditFolder] = useState<boolean>(false);
+  const [showModalEditSubfolder, setShowModalEditSubfolder] = useState<boolean>(false);
   const [folderName, setFolderName] = useState<string>('');
   const [isRefresh, setIsRefresh] = useState<boolean>(false);
   const [contextMenuVisible, setContextMenuVisible] = useState<boolean>(false);
@@ -60,7 +64,6 @@ const Admin = () => {
   const [userFolderName, setUserFolderName] = useState<string>('');
   const [subfolderName, setSubfolderName] = useState<string>('');
   const [addSubfolderId, setAddSubfolderId] = useState<string | null>(null);
-  const [showModalAddSubfolder, setShowModalAddSubfolder] = useState<boolean>(false);
 
   const [subfolderContextMenuVisible, setSubfolderContextMenuVisible] = useState<boolean>(false);
   const [subfolderContextMenuPosition, setSubfolderContextMenuPosition] = useState({ x: 0, y: 0 });
@@ -81,6 +84,9 @@ const Admin = () => {
   const [deleteFolderId, setDeleteFolderId] = useState<string | null>(null);
   const [showModalDeleteFolder, setShowModalDeleteFolder] = useState<boolean>(false);
 
+  const [editOldSubfolderName, setEditOldSubfolderName] = useState<string>('');
+  const [editSubfolderName, setEditSubfolderName] = useState<string>('');
+
   const handleModalErrorClose = () => setShowModalError(false);
   const handleModalAddFolderClose = () => setShowModalAddFolder(false);
   const handleModalAddLinkClose = () => setShowModalAddLink(false);
@@ -88,6 +94,7 @@ const Admin = () => {
   const handleModalDeleteLinkClose = () => setShowModalDeleteLink(false);
   const handleModalEditFolderClose = () => setShowModalEditFolder(false);
   const handleModalDeleteFolderClose = () => setShowModalDeleteFolder(false);
+  const handleModalEditSubfolderClose = () => setShowModalEditSubfolder(false);
 
   useEffect(() => {
     const getFolders = async () => {
@@ -195,13 +202,6 @@ const Admin = () => {
     setSubfolderName('');
   };
 
-  const handleSubfolderAddLink = (folderId: string, subfolderName: string) => {
-    setAction(Actions.ADD_LINK);
-    setAddLinkFolderId(folderId);
-    setSubfolderName(subfolderName);
-    setShowModalAddLink(true);
-  };
-
   const handleDeleteLink = (deleteLinkProps: IDeleteLinkProps) => {
     setAction(Actions.DELETE_LINK);
     setDeleteLinkFolderId(deleteLinkProps.folderId);
@@ -223,6 +223,20 @@ const Admin = () => {
     setAction(Actions.DELETE_FOLDER);
     setDeleteFolderId(folderId);
     setShowModalDeleteFolder(true);
+  };
+
+  const handleSubfolderAddLink = (folderId: string, subfolderName: string) => {
+    setAction(Actions.ADD_LINK);
+    setAddLinkFolderId(folderId);
+    setSubfolderName(subfolderName);
+    setShowModalAddLink(true);
+  };
+
+  const handleSubfolderEdit = (folderId: string, subfolderName: string) => {
+    setAction(Actions.EDIT_SUBFOLDER);
+    setEditFolderId(folderId);
+    setEditOldSubfolderName(subfolderName);
+    setShowModalEditSubfolder(true);
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -503,6 +517,53 @@ const Admin = () => {
       setActiveSubfolderLinks([]);
       setIsRefresh(!isRefresh);
     }
+
+    if (action === Actions.EDIT_SUBFOLDER && user?._id && editFolderId) {
+      if (!editSubfolderName) {
+        setErrorMessage('o nome da subpasta é obrigatório');
+        setShowModalError(true);
+        setIsLoading(false);
+
+        return;
+      }
+
+      if (editSubfolderName?.length > 16) {
+        setErrorMessage('o nome da subpasta deve ter no máximo 16 caracteres');
+        setShowModalError(true);
+        setIsLoading(false);
+        setEditSubfolderName('');
+
+        return;
+      }
+
+      const subfoldersName = userFolders.flatMap(folder => folder.subfolders?.map(subfolder => subfolder.name) ?? []);
+
+      if (subfoldersName.includes(editSubfolderName)) {
+        setErrorMessage('Já existe uma subpasta com esse nome');
+        setShowModalError(true);
+        setIsLoading(false);
+        setEditSubfolderName('');
+
+        return;
+      }
+
+      const response = await editSubfolder(user._id, editFolderId, editSubfolderName, editOldSubfolderName);
+
+      if ('error' in response) {
+        setErrorMessage(response.message);
+        setShowModalError(true);
+        setIsLoading(false);
+
+        return;
+      }
+
+      setIsLoading(false);
+      setShowModalEditSubfolder(false);
+      setEditFolderId(null);
+      setEditSubfolderName('');
+      setActiveSubfolderName(editSubfolderName);
+      setIsRefresh(!isRefresh);
+    }
   };
 
   return (
@@ -620,7 +681,7 @@ const Admin = () => {
                     id='editSubfolderNameTooltip'
                     tooltipText={`editar o nome da subpasta ${activeSubfolderName}`}
                     icon={FaRegEdit}
-                    onClick={() => alert('Editando a subpasta')}
+                    onClick={() => handleSubfolderEdit(openFolderId, activeSubfolderName)}
                   />
 
                   <TooltipCard
@@ -730,6 +791,7 @@ const Admin = () => {
                   subfolderContextMenuPosition={subfolderContextMenuPosition}
                   handleCloseContextMenuSubfolder={handleCloseContextMenuSubfolder}
                   handleSubfolderAddLink={handleSubfolderAddLink}
+                  handleSubfolderEdit={handleSubfolderEdit}
                 />
               )
             ))}
@@ -796,6 +858,16 @@ const Admin = () => {
         onSubmit={handleSubmit}
         isLoading={isLoading}
         deleteFolderName={userFolderName}
+      />
+
+      <ModalEditSubfolder
+        showModal={showModalEditSubfolder}
+        closeModal={handleModalEditSubfolderClose}
+        onSubmit={handleSubmit}
+        onChange={event => setEditSubfolderName(event.target.value)}
+        subfolderName={editSubfolderName}
+        oldSubfolderName={editOldSubfolderName}
+        isLoading={isLoading}
       />
     </Container>
   );

@@ -47,3 +47,13 @@ export interface IModalDeleteFolder {
   closeModal: () => void;
   onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
 }
+
+export interface IModalEditSubfolder {
+  showModal: boolean;
+  oldSubfolderName: string;
+  subfolderName: string;
+  isLoading: boolean;
+  closeModal: () => void;
+  onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
+  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+}

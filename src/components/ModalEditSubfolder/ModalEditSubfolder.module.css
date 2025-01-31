@@ -1,0 +1,37 @@
+.modal_title {
+  color: var(--background-color);
+}
+
+.modal_body {
+  background-color: var(--background-color);
+  color: var(--color);
+}
+
+.modal_footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.button_save {
+  background-color: var(--nav-color);
+  color: var(--white);
+  font-weight: 600;
+  padding-left: 25px;
+  padding-right: 25px;
+}
+.button_save:hover {
+  background-color: var(--background-color);
+  color: var(--color);
+}
+
+.button_cancel {
+  background-color: var(--color);
+  color: var(--background-color);
+  font-weight: 600;
+}
+.button_cancel:hover {
+  background-color: var(--background-color);
+  color: var(--color);
+}

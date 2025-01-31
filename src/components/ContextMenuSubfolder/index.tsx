@@ -34,7 +34,7 @@ const ContextMenuSubfolder = (props: IContextMenuSubfolderProps) => {
 
         <div
           className={styles.context_menu_option}
-          onClick={() => alert(`Editando a Div ${props.folder._id}`)}
+          onClick={() => props.handleSubfolderEdit(props.folder._id, props.subfolderName)}
         >
           <FaRegEdit size={18} />
           editar o nome da subpasta {props.subfolderName}
