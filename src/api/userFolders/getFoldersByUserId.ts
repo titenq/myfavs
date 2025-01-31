@@ -2,7 +2,7 @@ import { backendBaseUrl } from '@/helpers/baseUrl';
 import { IGenericError } from '@/interfaces/errorInterface';
 import { IUserFolder } from '@/interfaces/userFoldersInterface';
 
-const getUserFoldersByUserId = async (userId: string): Promise<IUserFolder | IGenericError> => {
+const getFoldersByUserId = async (userId: string): Promise<IUserFolder | IGenericError> => {
   try {
     const response = await fetch(`${backendBaseUrl}/folders/${userId}`, {
       method: 'GET',
@@ -32,4 +32,4 @@ const getUserFoldersByUserId = async (userId: string): Promise<IUserFolder | IGe
   }
 };
 
-export default getUserFoldersByUserId;
+export default getFoldersByUserId;

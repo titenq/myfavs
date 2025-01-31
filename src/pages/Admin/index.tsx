@@ -9,7 +9,7 @@ import { FaRegEdit } from 'react-icons/fa';
 import styles from '@/pages/Admin/Admin.module.css';
 import AuthContext from '@/context/AuthContext';
 import { IDeleteLinkProps, IFolder, ILinkBody } from '@/interfaces/userFoldersInterface';
-import getUserFoldersByUserId from '@/api/userFolders/getUserFoldersByUserId';
+import getFoldersByUserId from '@/api/userFolders/getFoldersByUserId';
 import ModalError from '@/components/ModalError';
 import ModalAddFolder from '@/components/ModalAddFolder';
 import createUserFolder from '@/api/userFolders/createUserFolder';
@@ -100,7 +100,7 @@ const Admin = () => {
     const getFolders = async () => {
       setIsLoading(true);
 
-      const response = await getUserFoldersByUserId(user?._id || '');
+      const response = await getFoldersByUserId(user?._id || '');
 
       if ('error' in response) {
         setErrorMessage(response.message);
