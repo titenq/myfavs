@@ -17,7 +17,7 @@ import ModalAddLink from '@/components/ModalAddLink';
 import { Actions } from '@/enums/actions';
 import createLink from '@/api/userFolders/createLink';
 import ModalAddSubfolder from '@/components/ModalAddSubfolder';
-import createUserSubfolder from '@/api/userFolders/createUserSubfolder';
+import createSubfolder from '@/api/userFolders/createSubfolder';
 import formatUrl from '@/helpers/formatUrl';
 import { urlValidator } from '@/helpers/validators';
 import ContextMenu from '@/components/ContextMenu';
@@ -314,7 +314,7 @@ const Admin = () => {
         return;
       }
 
-      const response = await createUserSubfolder(user._id, subfolderName, addSubfolderId);
+      const response = await createSubfolder(user._id, subfolderName, addSubfolderId);
 
       if ('error' in response) {
         setErrorMessage(response.message);

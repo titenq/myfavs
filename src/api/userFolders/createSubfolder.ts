@@ -1,7 +1,7 @@
 import { backendBaseUrl } from '@/helpers/baseUrl';
 import { IGenericError } from '@/interfaces/errorInterface';
 
-const createUserSubfolder = async (userId: string, subfolderName: string, folderId: string): Promise<{ ok: true } | IGenericError> => {
+const createSubfolder = async (userId: string, subfolderName: string, folderId: string): Promise<{ ok: true } | IGenericError> => {
   try {
     const response = await fetch(`${backendBaseUrl}/folders/${userId}/subfolders/${folderId}`, {
       method: 'POST',
@@ -30,4 +30,4 @@ const createUserSubfolder = async (userId: string, subfolderName: string, folder
   }
 };
 
-export default createUserSubfolder;
+export default createSubfolder;
