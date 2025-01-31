@@ -12,7 +12,7 @@ import { IDeleteLinkProps, IFolder, ILinkBody } from '@/interfaces/userFoldersIn
 import getFoldersByUserId from '@/api/userFolders/getFoldersByUserId';
 import ModalError from '@/components/ModalError';
 import ModalAddFolder from '@/components/ModalAddFolder';
-import createUserFolder from '@/api/userFolders/createUserFolder';
+import createFolder from '@/api/userFolders/createFolder';
 import ModalAddLink from '@/components/ModalAddLink';
 import { Actions } from '@/enums/actions';
 import createLink from '@/api/userFolders/createLink';
@@ -271,7 +271,7 @@ const Admin = () => {
         return;
       }
 
-      const response = await createUserFolder(user._id, folderName);
+      const response = await createFolder(user._id, folderName);
 
       if ('error' in response) {
         setErrorMessage(response.message);
