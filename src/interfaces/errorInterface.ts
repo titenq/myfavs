@@ -6,6 +6,6 @@ export interface IGenericError {
 
 export interface IPropsModalError {
   showModalError: boolean;
-  handleModalErrorClose: () => void;
+  handleModalErrorClose: VoidFunction;
   errorMessage: string;
 }

@@ -24,7 +24,7 @@ export interface IUserFolder {
 
 export interface ICardLinkProps {
   link: ILinkBody;
-  onDelete: () => void;
+  onDelete: VoidFunction;
 }
 
 export interface IDeleteLinkProps {

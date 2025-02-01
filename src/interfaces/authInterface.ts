@@ -11,7 +11,7 @@ export interface IAuthContext {
   isLoggedIn: boolean;
   user: IUser | null;
   authenticate: (loginData: ILoginData) => Promise<void>;
-  logout: () => void;
+  logout: VoidFunction;
   error: string | null;
   loading: boolean;
 }
