@@ -25,7 +25,7 @@ const CardLink = (props: ICardLinkProps) => {
           className={styles.link_url}
         >
           <Image
-            src={`http://localhost:3300${props.link?.picture}`}
+            src={props.link?.picture}
             alt='screenshot'
             crossOrigin="anonymous"
             className={styles.screenshot}
