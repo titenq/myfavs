@@ -42,7 +42,7 @@ const ContextMenuSubfolder = (props: IContextMenuSubfolderProps) => {
 
         <div
           className={styles.context_menu_option}
-          onClick={() => alert(`Deletando a Div ${props.folder._id}`)}
+          onClick={() => props.handleSubfolderDelete(props.folder._id, props.subfolderName)}
         >
           <FaRegTrashCan size={18} />
           deletar subpasta {props.subfolderName}

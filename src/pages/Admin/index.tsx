@@ -33,6 +33,8 @@ import ModalDeleteFolder from '@/components/ModalDeleteFolder';
 import deleteFolder from '@/api/userFolders/deleteFolder';
 import ModalEditSubfolder from '@/components/ModalEditSubfolder';
 import editSubfolder from '@/api/userFolders/editSubfolder';
+import ModalDeleteSubfolder from '@/components/ModalDeleteSubfolder';
+import deleteSubfolder from '@/api/userFolders/deleteSubfolder';
 
 const Admin = () => {
   const { user } = useContext(AuthContext);
@@ -48,6 +50,7 @@ const Admin = () => {
   const [showModalDeleteLink, setShowModalDeleteLink] = useState<boolean>(false);
   const [showModalEditFolder, setShowModalEditFolder] = useState<boolean>(false);
   const [showModalEditSubfolder, setShowModalEditSubfolder] = useState<boolean>(false);
+  const [showModalDeleteSubfolder, setShowModalDeleteSubfolder] = useState<boolean>(false);
   const [folderName, setFolderName] = useState<string>('');
   const [isRefresh, setIsRefresh] = useState<boolean>(false);
   const [contextMenuVisible, setContextMenuVisible] = useState<boolean>(false);
@@ -87,6 +90,8 @@ const Admin = () => {
   const [editOldSubfolderName, setEditOldSubfolderName] = useState<string>('');
   const [editSubfolderName, setEditSubfolderName] = useState<string>('');
 
+  const [deleteSubfolderName, setDeleteSubfolderName] = useState<string>('');
+
   const handleModalErrorClose = () => setShowModalError(false);
   const handleModalAddFolderClose = () => setShowModalAddFolder(false);
   const handleModalAddLinkClose = () => setShowModalAddLink(false);
@@ -95,6 +100,7 @@ const Admin = () => {
   const handleModalEditFolderClose = () => setShowModalEditFolder(false);
   const handleModalDeleteFolderClose = () => setShowModalDeleteFolder(false);
   const handleModalEditSubfolderClose = () => setShowModalEditSubfolder(false);
+  const handleModalDeleteSubfolderClose = () => setShowModalDeleteSubfolder(false);
 
   useEffect(() => {
     const getFolders = async () => {
@@ -237,6 +243,13 @@ const Admin = () => {
     setEditFolderId(folderId);
     setEditOldSubfolderName(subfolderName);
     setShowModalEditSubfolder(true);
+  };
+
+  const handleSubfolderDelete = (folderId: string, subfolderName: string) => {
+    setAction(Actions.DELETE_SUBFOLDER);
+    setDeleteFolderId(folderId);
+    setDeleteSubfolderName(subfolderName);
+    setShowModalDeleteSubfolder(true);
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -564,6 +577,25 @@ const Admin = () => {
       setActiveSubfolderName(editSubfolderName);
       setIsRefresh(!isRefresh);
     }
+
+    if (action === Actions.DELETE_SUBFOLDER && user?._id && deleteFolderId) {
+      const response = await deleteSubfolder(user._id, deleteFolderId, deleteSubfolderName);
+
+      if ('error' in response) {
+        setErrorMessage(response.message);
+        setShowModalError(true);
+        setIsLoading(false);
+
+        return;
+      }
+
+      setIsLoading(false);
+      setShowModalDeleteSubfolder(false);
+      setDeleteSubfolderName('');
+      setActiveSubfolderName('');
+      setActiveSubfolderLinks([]);
+      setIsRefresh(!isRefresh);
+    }
   };
 
   return (
@@ -688,7 +720,7 @@ const Admin = () => {
                     id='deleteSubfolderTooltip'
                     tooltipText={`deletar subpasta ${activeSubfolderName}`}
                     icon={FaRegTrashCan}
-                    onClick={() => alert('Deletando a subpasta')}
+                    onClick={() => handleSubfolderDelete(openFolderId, activeSubfolderName)}
                   />
                 </>
               )}
@@ -792,6 +824,7 @@ const Admin = () => {
                   handleCloseContextMenuSubfolder={handleCloseContextMenuSubfolder}
                   handleSubfolderAddLink={handleSubfolderAddLink}
                   handleSubfolderEdit={handleSubfolderEdit}
+                  handleSubfolderDelete={handleSubfolderDelete}
                 />
               )
             ))}
@@ -868,6 +901,14 @@ const Admin = () => {
         subfolderName={editSubfolderName}
         oldSubfolderName={editOldSubfolderName}
         isLoading={isLoading}
+      />
+
+      <ModalDeleteSubfolder
+        showModal={showModalDeleteSubfolder}
+        closeModal={handleModalDeleteSubfolderClose}
+        onSubmit={handleSubmit}
+        isLoading={isLoading}
+        deleteSubfolderName={deleteSubfolderName}
       />
     </Container>
   );

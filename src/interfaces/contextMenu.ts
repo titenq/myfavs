@@ -26,5 +26,6 @@ export interface IContextMenuSubfolderProps {
   handleCloseContextMenuSubfolder: VoidFunction;
   handleSubfolderAddLink: (folderId: string, subfolderName: string) => void;
   handleSubfolderEdit: (folderId: string, subfolderName: string) => void;
+  handleSubfolderDelete: (folderId: string, subfolderName: string) => void;
   subfolderName: string;
 }
