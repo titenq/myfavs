@@ -1,8 +1,9 @@
-import { ChangeEvent, FormEvent, useContext, useState } from 'react';
+import { ChangeEvent, FormEvent, useContext, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { Container, FloatingLabel, Form, Image, InputGroup } from 'react-bootstrap';
 import { FaEye, FaEyeSlash } from 'react-icons/fa6';
+import ReCAPTCHA from 'react-google-recaptcha';
 
 import styles from '@/pages/Login/Login.module.css';
 import { ILoginData } from '@/interfaces/loginInterface';
@@ -11,6 +12,8 @@ import ModalError from '@/components/ModalError';
 import logo from '@/assets/img/myfavs.png';
 import AuthContext from '@/context/AuthContext';
 import Loader from '@/components/Loader';
+
+const VITE_RECAPTCHA_SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY as string;
 
 const Login = () => {
   const {
@@ -22,6 +25,13 @@ const Login = () => {
   const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
   const [showModalError, setShowModalError] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
+  const captchaRef = useRef<ReCAPTCHA>(null);
+  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
+  const handleRecaptcha = () => {
+    if (captchaRef.current) {
+      setRecaptchaToken(captchaRef.current.getValue());
+    }
+  };
 
   const handleModalErrorClose = () => setShowModalError(false);
 
@@ -80,7 +90,16 @@ const Login = () => {
       return;
     }
 
-    await authenticate(values);
+    const data = {
+      email: values.email,
+      password: values.password,
+      recaptchaToken
+    };
+
+    await authenticate(data);
+
+    captchaRef?.current?.reset();
+    setRecaptchaToken(null);
 
     if (!error) {
       navigate('/admin');
@@ -137,8 +156,17 @@ const Login = () => {
             </Link>
           </div>
 
+          <div className={styles.captcha_container}>
+            <ReCAPTCHA
+              sitekey={VITE_RECAPTCHA_SITE_KEY}
+              ref={captchaRef}
+              onChange={handleRecaptcha}
+              onExpired={() => setRecaptchaToken(null)}
+            />
+          </div>
+
           {!loading && (
-            <button type='submit' className={styles.button}>
+            <button type='submit' className={styles.button} disabled={!recaptchaToken ? true : false}>
               {loading && <Loader />} logar
             </button>
           )}
