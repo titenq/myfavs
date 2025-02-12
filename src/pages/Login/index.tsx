@@ -29,6 +29,7 @@ const Login = () => {
   const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
   const handleRecaptcha = () => {
     if (captchaRef.current) {
+      // console.log(captchaRef.current.getValue());
       setRecaptchaToken(captchaRef.current.getValue());
     }
   };
