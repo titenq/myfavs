@@ -1,4 +1,4 @@
-import { ChangeEvent, FormEvent, useState } from 'react';
+import { ChangeEvent, FormEvent, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { Container, FloatingLabel, Form, Image } from 'react-bootstrap';
@@ -11,12 +11,22 @@ import { IResendLinkResponse } from '@/interfaces/authInterface';
 import { IGenericError } from '@/interfaces/errorInterface';
 import forgotPassword from '@/api/auth/forgotPassword';
 import Loader from '@/components/Loader';
+import ReCAPTCHA from 'react-google-recaptcha';
+
+const VITE_RECAPTCHA_SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY as string;
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
   const [showModalError, setShowModalError] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const captchaRef = useRef<ReCAPTCHA>(null);
+  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
+  const handleRecaptcha = () => {
+    if (captchaRef.current) {
+      setRecaptchaToken(captchaRef.current.getValue());
+    }
+  };
 
   const handleModalErrorClose = () => setShowModalError(false);
 
@@ -47,7 +57,10 @@ const ForgotPassword = () => {
       return;
     }
 
-    const response: IResendLinkResponse | IGenericError = await forgotPassword({ email });
+    const response: IResendLinkResponse | IGenericError = await forgotPassword({
+      email,
+      recaptchaToken
+    });
 
     if ('error' in response) {
       setErrorMessage(response.message);
@@ -85,9 +98,21 @@ const ForgotPassword = () => {
             />
           </FloatingLabel>
 
-          <button type='submit' className={styles.button}>
-            {isLoading && <Loader />} cadastrar
+          <ReCAPTCHA
+            sitekey={VITE_RECAPTCHA_SITE_KEY}
+            ref={captchaRef}
+            onChange={handleRecaptcha}
+            onExpired={() => setRecaptchaToken(null)}
+          />
+          
+          <button
+            type='submit'
+            className={styles.button}
+            disabled={!recaptchaToken ? true : false}
+          >
+            {isLoading && <Loader />} enviar
           </button>
+          
         </Form>
       </div>
 

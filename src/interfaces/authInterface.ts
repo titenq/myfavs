@@ -27,6 +27,7 @@ export interface ILogoutResponse {
 
 export interface IResendLink {
   email: string;
+  recaptchaToken?: string | null;
 }
 
 export interface IResendLinkResponse {

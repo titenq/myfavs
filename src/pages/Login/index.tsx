@@ -160,17 +160,19 @@ const Login = () => {
             </Link>
           </div>
 
-          <div className={styles.captcha_container}>
-            <ReCAPTCHA
-              sitekey={VITE_RECAPTCHA_SITE_KEY}
-              ref={captchaRef}
-              onChange={handleRecaptcha}
-              onExpired={() => setRecaptchaToken(null)}
-            />
-          </div>
+          <ReCAPTCHA
+            sitekey={VITE_RECAPTCHA_SITE_KEY}
+            ref={captchaRef}
+            onChange={handleRecaptcha}
+            onExpired={() => setRecaptchaToken(null)}
+          />
 
           {!loading && (
-            <button type='submit' className={styles.button} disabled={!recaptchaToken ? true : false}>
+            <button
+              type='submit'
+              className={styles.button}
+              disabled={!recaptchaToken ? true : false}
+            >
               {loading && <Loader />} logar
             </button>
           )}
