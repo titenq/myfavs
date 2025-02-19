@@ -73,6 +73,10 @@
   transition: all 0.3s ease-out;
 }
 
+.button:disabled {
+  cursor: not-allowed;
+}
+
 .links_container {
   display: flex;
   justify-content: center;

@@ -26,17 +26,14 @@ const AuthProvider: FC<IAuthProviderProps> = ({ children }) => {
     return storedUser ? JSON.parse(storedUser) : null;
   });
 
-  const authenticate = async (loginData: ILoginData): Promise<void> => {
+  const authenticate = async (loginData: ILoginData): Promise<void | IGenericError> => {
     try {
-      setError(null);
       setLoading(true);
 
       const response = await login(loginData);
 
       if ('error' in response) {
-        setError(response.message);
-        
-        return;
+        return response;
       }
 
       if (response) {
@@ -52,9 +49,16 @@ const AuthProvider: FC<IAuthProviderProps> = ({ children }) => {
 
       return;
     } catch (_error) {
-      setError('erro ao fazer login');
       setUser(null);
       setIsLoggedIn(false);
+
+      const errorMessage: IGenericError = {
+        error: true,
+        message: 'erro ao fazer login',
+        statusCode: 400
+      };
+
+      return errorMessage;
     } finally {
       setLoading(false);
     }

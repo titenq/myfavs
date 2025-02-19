@@ -18,7 +18,6 @@ const VITE_RECAPTCHA_SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY as strin
 const Login = () => {
   const {
     authenticate,
-    error,
     loading
   } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -29,7 +28,6 @@ const Login = () => {
   const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
   const handleRecaptcha = () => {
     if (captchaRef.current) {
-      // console.log(captchaRef.current.getValue());
       setRecaptchaToken(captchaRef.current.getValue());
     }
   };
@@ -97,14 +95,19 @@ const Login = () => {
       recaptchaToken
     };
 
-    await authenticate(data);
-
+    const response = await authenticate(data);
+    
     captchaRef?.current?.reset();
     setRecaptchaToken(null);
 
-    if (!error) {
-      navigate('/admin');
+    if (typeof response === 'object' && 'error' in response) {
+      setErrorMessage(response.message);
+      setShowModalError(true);
+
+      return;
     }
+    
+    navigate('/admin');
   };
 
   return (
