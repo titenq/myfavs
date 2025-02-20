@@ -1,9 +1,8 @@
-import { ChangeEvent, FormEvent, useRef, useState } from 'react';
+import { ChangeEvent, FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { Container, FloatingLabel, Form, Image, InputGroup } from 'react-bootstrap';
 import { FaEye, FaEyeSlash } from 'react-icons/fa6';
-import ReCAPTCHA from 'react-google-recaptcha';
 
 import styles from '@/pages/Register/Register.module.css';
 import { emailValidator, passwordValidator } from '@/helpers/validators';
@@ -14,22 +13,15 @@ import register from '@/api/auth/register';
 import { IUser } from '@/interfaces/userInterface';
 import { IGenericError } from '@/interfaces/errorInterface';
 import Loader from '@/components/Loader';
-
-const VITE_RECAPTCHA_SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY as string;
+import useRecaptcha from '@/hooks/useRecapcha';
 
 const Register = () => {
   const navigate = useNavigate();
+  const { recaptchaToken, resetRecaptcha, RecaptchaComponent } = useRecaptcha();
   const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
   const [showModalError, setShowModalError] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const captchaRef = useRef<ReCAPTCHA>(null);
-  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
-  const handleRecaptcha = () => {
-    if (captchaRef.current) {
-      setRecaptchaToken(captchaRef.current.getValue());
-    }
-  };
 
   const handleModalErrorClose = () => setShowModalError(false);
 
@@ -121,6 +113,8 @@ const Register = () => {
 
     const response: IUser | IGenericError = await register(data);
 
+    resetRecaptcha();
+
     if ('error' in response) {
       setErrorMessage(response.message);
       setShowModalError(true);
@@ -201,12 +195,7 @@ const Register = () => {
             </InputGroup.Text>
           </InputGroup>
 
-          <ReCAPTCHA
-            sitekey={VITE_RECAPTCHA_SITE_KEY}
-            ref={captchaRef}
-            onChange={handleRecaptcha}
-            onExpired={() => setRecaptchaToken(null)}
-          />
+          <RecaptchaComponent />
 
           <button
             type='submit'
