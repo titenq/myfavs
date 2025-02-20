@@ -1,9 +1,28 @@
+import { useEffect, useState } from 'react';
+
 import { Container, Image } from 'react-bootstrap';
 
 import styles from '@/pages/Home/Home.module.css';
 import logo from '@/assets/img/myfavs.png';
+import { ILinkBody } from '@/interfaces/userFoldersInterface';
+import getLinks from '@/api/userFolders/getLinks';
+import CardLink from '@/components/CardLink';
 
 const Home = () => {
+  const [links, setLinks] = useState<ILinkBody[]>([]);
+
+  useEffect(() => {
+    const fetchLinks = async () => {
+      const response = await getLinks();
+
+      if (Array.isArray(response) && response.length > 0) {
+        setLinks(response);
+      }
+    };
+
+    fetchLinks();
+  }, []);
+
   return (
     <Container className={styles.container}>
       <div className={styles.logo_container}>
@@ -27,6 +46,16 @@ const Home = () => {
             mantenha tudo ao seu alcance com apenas alguns cliques
           </p>
         </div>
+      </div>
+
+      <div className={styles.links_container}>
+        {links.map((link, i) => (
+          <CardLink
+            key={link.picture || i}
+            link={link}
+            onDelete={() => { }}
+          />
+        ))}
       </div>
     </Container>
   );

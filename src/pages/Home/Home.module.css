@@ -27,3 +27,12 @@
   font-weight: 500;
   margin: 0 0 5px 0;
 }
+
+.links_container {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-top: 40px;
+}
