@@ -1,18 +1,21 @@
-import { ChangeEvent, FormEvent, useState } from 'react';
+import { ChangeEvent, FormEvent, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { Container, FloatingLabel, Form, Image, InputGroup } from 'react-bootstrap';
 import { FaEye, FaEyeSlash } from 'react-icons/fa6';
+import ReCAPTCHA from 'react-google-recaptcha';
 
 import styles from '@/pages/Register/Register.module.css';
 import { emailValidator, passwordValidator } from '@/helpers/validators';
 import ModalError from '@/components/ModalError';
 import logo from '@/assets/img/myfavs.png';
-import { IRegister, IRegisterData } from '@/interfaces/registerInterface';
+import { IRegister, IRegisterRequest } from '@/interfaces/registerInterface';
 import register from '@/api/auth/register';
 import { IUser } from '@/interfaces/userInterface';
 import { IGenericError } from '@/interfaces/errorInterface';
 import Loader from '@/components/Loader';
+
+const VITE_RECAPTCHA_SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY as string;
 
 const Register = () => {
   const navigate = useNavigate();
@@ -20,6 +23,13 @@ const Register = () => {
   const [showModalError, setShowModalError] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const captchaRef = useRef<ReCAPTCHA>(null);
+  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
+  const handleRecaptcha = () => {
+    if (captchaRef.current) {
+      setRecaptchaToken(captchaRef.current.getValue());
+    }
+  };
 
   const handleModalErrorClose = () => setShowModalError(false);
 
@@ -102,10 +112,11 @@ const Register = () => {
       return;
     }
 
-    const data: IRegisterData = {
+    const data: IRegisterRequest = {
       name: values.name,
       email: values.email,
-      password: values.password
+      password: values.password,
+      recaptchaToken
     };
 
     const response: IUser | IGenericError = await register(data);
@@ -190,7 +201,18 @@ const Register = () => {
             </InputGroup.Text>
           </InputGroup>
 
-          <button type='submit' className={styles.button}>
+          <ReCAPTCHA
+            sitekey={VITE_RECAPTCHA_SITE_KEY}
+            ref={captchaRef}
+            onChange={handleRecaptcha}
+            onExpired={() => setRecaptchaToken(null)}
+          />
+
+          <button
+            type='submit'
+            className={styles.button}
+            disabled={!recaptchaToken ? true : false}
+          >
             {isLoading && <Loader />} cadastrar
           </button>
         </Form>

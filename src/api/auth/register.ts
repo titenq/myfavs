@@ -1,17 +1,23 @@
 import { backendBaseUrl } from '@/helpers/baseUrl';
 import { IGenericError } from '@/interfaces/errorInterface';
-import { IRegisterData } from '@/interfaces/registerInterface';
+import { IRegisterRequest } from '@/interfaces/registerInterface';
 import { IUserResponse } from '@/interfaces/userInterface';
 
-const register = async (registerData: IRegisterData): Promise<IUserResponse | IGenericError> => {
+const register = async (registerData: IRegisterRequest): Promise<IUserResponse | IGenericError> => {
   try {
+    const {
+      recaptchaToken,
+      ...restData
+    } = registerData;
+
     const response = await fetch(`${backendBaseUrl}/auth/register`, {
       method: 'POST',
       credentials: 'include',
       headers: {
-        'Content-Type': 'application/json; charset=utf-8'
+        'Content-Type': 'application/json; charset=utf-8',
+        'X-Recaptcha-Token': recaptchaToken!
       },
-      body: JSON.stringify(registerData)
+      body: JSON.stringify(restData)
     });
 
     if (!response.ok) {
