@@ -4,13 +4,16 @@ import { IGenericError } from '@/interfaces/errorInterface';
 
 const forgotPassword = async (forgotPassword: IResendLink): Promise<IResendLinkResponse | IGenericError> => {
   try {
+    const { email, recaptchaToken } = forgotPassword;
+
     const response = await fetch(`${backendBaseUrl}/auth/forgot-password`, {
       method: 'POST',
       credentials: 'include',
       headers: {
-        'Content-Type': 'application/json; charset=utf-8'
+        'Content-Type': 'application/json; charset=utf-8',
+        'X-Recaptcha-Token': recaptchaToken!
       },
-      body: JSON.stringify(forgotPassword)
+      body: JSON.stringify({ email })
     });
 
     if (!response.ok) {
