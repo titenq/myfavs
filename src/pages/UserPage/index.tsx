@@ -9,11 +9,12 @@ import CardLink from '@/components/CardLink';
 import ModalError from '@/components/ModalError';
 import { useLocation, useParams } from 'react-router-dom';
 import getPublicFoldersByUserId from '@/api/userFolders/getPublicFoldersByUserId';
+import getUserById from '@/api/user/getUserById';
 
 const UserPage = () => {
   const { userId } = useParams();
   const { state } = useLocation();
-  const username = state?.username;
+  const [username, setUsername] = useState(state?.username || '');
   const [userFolders, setUserFolders] = useState<IFolder[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [openFolderId, setOpenFolderId] = useState('');
@@ -28,6 +29,14 @@ const UserPage = () => {
   useEffect(() => {
     const getFolders = async () => {
       setIsLoading(true);
+
+      if (!username) {
+        const userResponse = await getUserById(userId!);
+
+        if (!('error' in userResponse)) {
+          setUsername(userResponse.name);
+        }
+      }
 
       const response = await getPublicFoldersByUserId(userId!);
 
@@ -44,7 +53,7 @@ const UserPage = () => {
     };
 
     getFolders();
-  }, [userId]);
+  }, [userId, username]);
 
   const handleFolderClick = (folderId: string, folderName: string) => {
     setOpenFolderId(openFolderId === folderId ? '' : folderId);
