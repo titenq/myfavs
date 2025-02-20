@@ -46,7 +46,19 @@ const Register = () => {
   };
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setValue(event.target.getAttribute('name') || '', event.target.value);
+    const name = event.target.getAttribute('name') || '';
+    let value = event.target.value;
+
+    if (name === 'name') {
+      value = value
+        .toLowerCase()
+        .replace(/[^a-z0-9\-_]/g, '')
+        .slice(0, 10);
+
+      event.target.value = value;
+    }
+
+    setValue(name, value);
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -150,6 +162,7 @@ const Register = () => {
               onChange={handleChange}
             />
           </FloatingLabel>
+          <span className={styles.span}>de 3 a 10 caracteres, somente minúsculas, números, - e _</span>
 
           <FloatingLabel
             controlId='email'
@@ -179,6 +192,9 @@ const Register = () => {
               {passwordVisible ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
             </InputGroup.Text>
           </InputGroup>
+          <span className={styles.span}>
+            mínimo de 8 caracteres, maiúsculo, minúsculo, número e caractere especial
+          </span>
 
           <InputGroup className={styles.input}>
             <FloatingLabel controlId='confirmPassword' label='confirmar senha'>

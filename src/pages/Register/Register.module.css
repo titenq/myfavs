@@ -1,6 +1,5 @@
 .container {
   width: 100vw;
-  height: calc(100vh - 87.39px);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -12,9 +11,10 @@
   align-items: center;
   flex-direction: column;
   width: 700px;
-  height: 600px;
   background-color: var(--nav-color);
   border-radius: 10px;
+  margin: 20px 0;
+  padding-bottom: 20px;
 }
 
 .logo_container {
@@ -23,7 +23,7 @@
   align-items: center;
   flex-direction: row;
   gap: 30px;
-  margin-bottom: 30px;
+  margin: 15px 0 10px 0;
 }
 
 .logo {
@@ -63,7 +63,7 @@
 }
 
 .button {
-  margin-top: 30px;
+  margin-top: 20px;
   font-weight: 600;
   padding: 10px 40px;
   background-color: var(--background-color);
@@ -95,4 +95,10 @@
 
 .link:hover {
   color: var(--background-color);
+}
+
+.span {
+  color: var(--white);
+  font-size: 12px;
+  margin-top: -10px;
 }
