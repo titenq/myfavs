@@ -57,3 +57,13 @@
   border-radius: 50%;
   cursor: pointer;
 }
+
+.username {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--white);
+  font-size: 0.8rem;
+  gap: 5px;
+  cursor: pointer;
+}

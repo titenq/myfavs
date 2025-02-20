@@ -17,6 +17,7 @@ const ForgotPassword = lazy(() => import('@/pages/ForgotPassword'));
 const ForgotPasswordOk = lazy(() => import('@/pages/ForgotPasswordOk'));
 const ResetPassword = lazy(() => import('@/pages/ResetPassword'));
 const ResetPasswordOk = lazy(() => import('@/pages/ResetPasswordOk'));
+const UserPage = lazy(() => import('@/pages/UserPage'));
 const NotFound = lazy(() => import('@/pages/NotFound'));
 
 const router = createBrowserRouter([
@@ -113,6 +114,16 @@ const router = createBrowserRouter([
           <Suspense fallback={<div>Carregando...</div>}>
             <ProtectedRoute>
               <Admin />
+            </ProtectedRoute>
+          </Suspense>
+        )
+      },
+      {
+        path: '/user/:userId',
+        element: (
+          <Suspense fallback={<div>Carregando...</div>}>
+            <ProtectedRoute>
+              <UserPage />
             </ProtectedRoute>
           </Suspense>
         )

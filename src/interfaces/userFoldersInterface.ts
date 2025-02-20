@@ -8,6 +8,11 @@ export interface ILink {
 
 export type ILinkBody = Omit<ILink, '_id'>;
 
+export interface ILinkResponse extends ILinkBody {
+  userId?: string;
+  username?: string;
+}
+
 export interface IFolder {
   _id: string;
   name: string;
@@ -23,7 +28,7 @@ export interface IUserFolder {
 }
 
 export interface ICardLinkProps {
-  link: ILinkBody;
+  link: ILinkResponse;
   onDelete: VoidFunction;
   showDeleteIcon?: boolean;
 }

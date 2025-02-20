@@ -1,11 +1,12 @@
 import { backendBaseUrl } from '@/helpers/baseUrl';
 import { IGenericError } from '@/interfaces/errorInterface';
-import { ILinkResponse } from '@/interfaces/userFoldersInterface';
+import { IUserFolder } from '@/interfaces/userFoldersInterface';
 
-const getLinks = async (): Promise<ILinkResponse[] | IGenericError> => {
+const getPublicFoldersByUserId = async (userId: string): Promise<IUserFolder | IGenericError> => {
   try {
-    const response = await fetch(`${backendBaseUrl}/folders/links`, {
+    const response = await fetch(`${backendBaseUrl}/folders/public/${userId}`, {
       method: 'GET',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json; charset=utf-8'
       }
@@ -17,13 +18,13 @@ const getLinks = async (): Promise<ILinkResponse[] | IGenericError> => {
       return data;
     }
 
-    const data: ILinkResponse[] = await response.json();
+    const data: IUserFolder = await response.json();
 
     return data;
   } catch (_error) {
     const errorMessage: IGenericError = {
       error: true,
-      message: 'erro ao buscar links',
+      message: 'erro ao buscar as pastas do usuário',
       statusCode: 400
     }
 
@@ -31,4 +32,4 @@ const getLinks = async (): Promise<ILinkResponse[] | IGenericError> => {
   }
 };
 
-export default getLinks;
+export default getPublicFoldersByUserId;

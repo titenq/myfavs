@@ -1,5 +1,7 @@
+import { useNavigate } from 'react-router-dom';
+
 import { Image } from 'react-bootstrap';
-import { FaLock } from 'react-icons/fa';
+import { FaLock, FaUser } from 'react-icons/fa';
 import { RiCloseCircleFill } from 'react-icons/ri';
 
 import styles from '@/components/CardLink/CardLink.module.css';
@@ -7,8 +9,22 @@ import noScreenshot from '@/assets/img/no-screenshot.webp';
 import { ICardLinkProps } from '@/interfaces/userFoldersInterface';
 
 const CardLink = (props: ICardLinkProps) => {
+  const navigate = useNavigate();
+
+  const handleUserClick = () => {
+    navigate(`/user/${props.link.userId}`, {
+      state: { username: props.link.username }
+    });
+  };
+
   return (
     <div className={styles.links_container}>
+      {props.link?.username && (
+        <div className={styles.username} onClick={handleUserClick}>
+          <FaUser size={14} /> {props.link.username}
+        </div>
+      )}
+
       {props.showDeleteIcon && (
         <div className={styles.delete_icon}>
           <RiCloseCircleFill
