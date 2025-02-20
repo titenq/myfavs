@@ -5,13 +5,16 @@ import { IUser } from '@/interfaces/userInterface';
 
 const login = async (loginData: ILoginData): Promise<IUser | IGenericError> => {
   try {
+    const { email, password, recaptchaToken } = loginData;
+
     const response = await fetch(`${backendBaseUrl}/auth/login`, {
       method: 'POST',
       credentials: 'include',
       headers: {
-        'Content-Type': 'application/json; charset=utf-8'
+        'Content-Type': 'application/json; charset=utf-8',
+        'X-Recaptcha-Token': recaptchaToken!
       },
-      body: JSON.stringify(loginData)
+      body: JSON.stringify({ email, password })
     });
 
     if (!response.ok) {
