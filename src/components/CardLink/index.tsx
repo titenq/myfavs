@@ -9,13 +9,15 @@ import { ICardLinkProps } from '@/interfaces/userFoldersInterface';
 const CardLink = (props: ICardLinkProps) => {
   return (
     <div className={styles.links_container}>
-      <div className={styles.delete_icon}>
-        <RiCloseCircleFill 
-          size={34} 
-          onClick={() => props.onDelete()} 
-          style={{ cursor: 'pointer' }}
-        />
-      </div>
+      {props.showDeleteIcon && (
+        <div className={styles.delete_icon}>
+          <RiCloseCircleFill
+            size={34}
+            onClick={() => props.onDelete()}
+            style={{ cursor: 'pointer' }}
+          />
+        </div>
+      )}
 
       {props.link?.picture ? (
         <a

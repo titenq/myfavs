@@ -773,6 +773,7 @@ const Admin = () => {
                             linkUrl: link.url,
                             linkPicture: link.picture || null,
                           })}
+                          showDeleteIcon={true}
                         />
                       ))}
                     </div>
@@ -794,6 +795,7 @@ const Admin = () => {
                       linkUrl: link.url,
                       linkPicture: link.picture || null
                     })}
+                    showDeleteIcon={true}
                   />
                 ))}
               </div>

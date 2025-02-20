@@ -54,6 +54,7 @@ const Home = () => {
             key={link.picture || i}
             link={link}
             onDelete={() => { }}
+            showDeleteIcon={false}
           />
         ))}
       </div>
