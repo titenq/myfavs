@@ -33,3 +33,15 @@ input {
   border-radius: 0 !important;
   box-shadow: none !important;
 }
+
+@media screen and (max-width: 768px) {
+  :root {
+    font-size: 12px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  :root {
+    font-size: 10px;
+  }
+}
