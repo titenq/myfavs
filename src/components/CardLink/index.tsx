@@ -12,9 +12,7 @@ const CardLink = (props: ICardLinkProps) => {
   const navigate = useNavigate();
 
   const handleUserClick = () => {
-    navigate(`/user/${props.link.userId}`, {
-      state: { username: props.link.username }
-    });
+    navigate(`/user/${props.link.username}`);
   };
 
   return (

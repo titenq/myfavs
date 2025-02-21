@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
 import { Container } from 'react-bootstrap';
 import { FcFolder, FcOpenedFolder } from 'react-icons/fc';
@@ -7,14 +8,10 @@ import styles from '@/pages/UserPage/UserPage.module.css';
 import { IFolder, ILinkBody } from '@/interfaces/userFoldersInterface';
 import CardLink from '@/components/CardLink';
 import ModalError from '@/components/ModalError';
-import { useLocation, useParams } from 'react-router-dom';
-import getPublicFoldersByUserId from '@/api/userFolders/getPublicFoldersByUserId';
-import getUserById from '@/api/user/getUserById';
+import getPublicFoldersByUsername from '@/api/userFolders/getPublicFoldersByUsername';
 
 const UserPage = () => {
-  const { userId } = useParams();
-  const { state } = useLocation();
-  const [username, setUsername] = useState(state?.username || '');
+  const { username } = useParams();
   const [userFolders, setUserFolders] = useState<IFolder[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [openFolderId, setOpenFolderId] = useState('');
@@ -30,15 +27,7 @@ const UserPage = () => {
     const getFolders = async () => {
       setIsLoading(true);
 
-      if (!username) {
-        const userResponse = await getUserById(userId!);
-
-        if (!('error' in userResponse)) {
-          setUsername(userResponse.name);
-        }
-      }
-
-      const response = await getPublicFoldersByUserId(userId!);
+      const response = await getPublicFoldersByUsername(username!);
 
       if ('error' in response) {
         setErrorMessage(response.message);
@@ -53,7 +42,7 @@ const UserPage = () => {
     };
 
     getFolders();
-  }, [userId, username]);
+  }, [username]);
 
   const handleFolderClick = (folderId: string, folderName: string) => {
     setOpenFolderId(openFolderId === folderId ? '' : folderId);

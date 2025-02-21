@@ -119,7 +119,7 @@ const router = createBrowserRouter([
         )
       },
       {
-        path: '/user/:userId',
+        path: '/user/:username',
         element: (
           <Suspense fallback={<div>Carregando...</div>}>
             <UserPage />
