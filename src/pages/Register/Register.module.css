@@ -10,11 +10,11 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  width: 700px;
+  width: 43.75rem;
   background-color: var(--nav-color);
   border-radius: 10px;
-  margin: 20px 0;
-  padding-bottom: 20px;
+  margin: 1.25rem 0;
+  padding-bottom: 1.25rem;
 }
 
 .logo_container {
@@ -22,20 +22,20 @@
   justify-content: center;
   align-items: center;
   flex-direction: row;
-  gap: 30px;
-  margin: 15px 0 10px 0;
+  gap: 1.875rem;
+  margin: 0.9375rem 0 0.625rem 0;
 }
 
 .logo {
-  width: 88.95px;
-  height: 80.75px;
+  width: 5.5594rem;
+  height: 5.0469rem;
 }
 
 .title {
   text-align: center;
   color: var(--white);
-  padding: 10px;
-  font-size: 28px;
+  padding: 0.625rem;
+  font-size: 1.75rem;
 }
 
 .input_container {
@@ -44,11 +44,11 @@
   align-items: center;
   flex-direction: column;
   width: 80%;
-  padding: 0 30px;
+  padding: 0 1.875rem;
 }
 
 .input {
-  margin: 10px;
+  margin: 0.625rem;
   width: 100%;
 }
 
@@ -63,12 +63,12 @@
 }
 
 .button {
-  margin-top: 20px;
+  margin-top: 1.25rem;
   font-weight: 600;
-  padding: 10px 40px;
+  padding: 0.625rem 2.5rem;
   background-color: var(--background-color);
   color: var(--nav-color);
-  font-size: 18px;
+  font-size: 1.125rem;
   border: 1px solid transparent;
   transition: all 0.3s ease-out;
 }
@@ -82,8 +82,8 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  gap: 5px;
-  margin-top: 10px;
+  gap: 0.3125rem;
+  margin-top: 0.625rem;
 }
 
 .link {
@@ -99,6 +99,6 @@
 
 .span {
   color: var(--white);
-  font-size: 12px;
-  margin-top: -10px;
+  font-size: 0.75rem;
+  margin-top: -0.625rem;
 }

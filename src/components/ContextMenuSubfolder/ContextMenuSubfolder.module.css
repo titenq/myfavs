@@ -16,14 +16,14 @@
   justify-content: center;
   align-items: flex-start;
   flex-direction: column;
-  gap: 5px;
-  padding: 0 10px 10px 10px;
+  gap: 0.3125rem;
+  padding: 0 0.625rem 0.625rem 0.625rem;
 }
 
 .context_menu_option {
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  gap: 5px;
+  gap: 0.3125rem;
   cursor: pointer;
 }

@@ -18,8 +18,7 @@
   background-color: var(--nav-color);
   color: var(--white);
   font-weight: 600;
-  padding-left: 25px;
-  padding-right: 25px;
+  padding: 0 1.5625rem;
 }
 .button_save:hover {
   background-color: var(--background-color);

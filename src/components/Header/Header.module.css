@@ -1,6 +1,6 @@
 .navbar {
   width: 100%;
-  height: 80px;
+  height: 5rem;
   background-color: var(--nav-color);
   margin: 0;
   padding: 0;
@@ -15,13 +15,13 @@
 }
 
 .logo_header {
-  width: 85.4px;
-  height: 77.4px;
-  padding: 10px;
+  width: 5.3375rem;
+  height: 4.8375rem;
+  padding: 0.625rem;
 }
 
 .link {
-  font-size: 18px;
+  font-size: 1.125rem;
   font-weight: 600;
   color: var(--white);
 }
