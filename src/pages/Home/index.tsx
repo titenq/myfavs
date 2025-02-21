@@ -7,9 +7,13 @@ import logo from '@/assets/img/myfavs.png';
 import { ILinkBody } from '@/interfaces/userFoldersInterface';
 import getLinks from '@/api/userFolders/getLinks';
 import CardLink from '@/components/CardLink';
+import { IUsersLinks } from '@/interfaces/userInterface';
+import getUsersLinks from '@/api/userFolders/getUsersLinks';
+import CardUser from '@/components/CardUser';
 
 const Home = () => {
   const [links, setLinks] = useState<ILinkBody[]>([]);
+  const [usersLinks, setUsersLinks] = useState<IUsersLinks[]>([]);
 
   useEffect(() => {
     const fetchLinks = async () => {
@@ -20,7 +24,16 @@ const Home = () => {
       }
     };
 
+    const fetchUsersLinks = async () => {
+      const response = await getUsersLinks();
+
+      if (Array.isArray(response) && response.length > 0) {
+        setUsersLinks(response);
+      }
+    };
+
     fetchLinks();
+    fetchUsersLinks();
   }, []);
 
   return (
@@ -55,6 +68,16 @@ const Home = () => {
             link={link}
             onDelete={() => { }}
             showDeleteIcon={false}
+          />
+        ))}
+      </div>
+
+      <div className={styles.users_links_container}>
+        {usersLinks.map((userLink, i) => (
+          <CardUser
+            key={`${userLink.name}-${i}`}
+            name={userLink.name}
+            qtdLinks={userLink.qtdLinks}
           />
         ))}
       </div>

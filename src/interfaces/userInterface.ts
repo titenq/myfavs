@@ -16,3 +16,13 @@ export interface IUserResponse {
 }
 
 export type IEmailVerifiedResponse = Omit<IUserResponse, 'isEmailVerified' | 'emailVerificationToken'>;
+
+export interface IUsersLinks {
+  name: string;
+  qtdLinks: number;
+}
+
+export interface ICardUserProps {
+  name: string;
+  qtdLinks: number;
+}
