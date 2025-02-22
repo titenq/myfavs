@@ -43,7 +43,7 @@ const AuthProvider: FC<IAuthProviderProps> = ({ children }) => {
         Cookies.set('user', JSON.stringify(response), {
           expires: 1,
           secure: true,
-          sameSite: 'Lax'
+          sameSite: 'none'
         });
       }
 
