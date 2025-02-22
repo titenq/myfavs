@@ -102,27 +102,6 @@ const Admin = () => {
   const handleModalEditSubfolderClose = () => setShowModalEditSubfolder(false);
   const handleModalDeleteSubfolderClose = () => setShowModalDeleteSubfolder(false);
 
-  useEffect(() => {
-    const getFolders = async () => {
-      setIsLoading(true);
-
-      const response = await getFoldersByUserId(user?._id || '');
-
-      if ('error' in response) {
-        setErrorMessage(response.message);
-        setShowModalError(true);
-        setIsLoading(false);
-
-        return;
-      }
-
-      setUserFolders(response?.folders);
-      setIsLoading(false);
-    };
-
-    getFolders();
-  }, [user?._id, isRefresh]);
-
   const handleFolderClick = (folderId: string, folderName: string) => {
     setOpenFolderId(openFolderId === folderId ? '' : folderId);
     setUserFolderName(openFolderId === folderId ? '' : folderName);
@@ -597,6 +576,27 @@ const Admin = () => {
       setIsRefresh(!isRefresh);
     }
   };
+
+  useEffect(() => {
+    const getFolders = async () => {
+      setIsLoading(true);
+
+      const response = await getFoldersByUserId(user?._id || '');
+
+      if ('error' in response) {
+        setErrorMessage(response.message);
+        setShowModalError(true);
+        setIsLoading(false);
+
+        return;
+      }
+
+      setUserFolders(response?.folders);
+      setIsLoading(false);
+    };
+
+    getFolders();
+  }, [user?._id, isRefresh]);
 
   return (
     <Container className={styles.container} onClick={handleCloseContextMenu}>
