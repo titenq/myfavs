@@ -37,7 +37,7 @@ import ModalDeleteSubfolder from '@/components/ModalDeleteSubfolder';
 import deleteSubfolder from '@/api/userFolders/deleteSubfolder';
 
 const Admin = () => {
-  const { user } = useContext(AuthContext);
+  const { isLoggedIn, user } = useContext(AuthContext);
   const [action, setAction] = useState<Actions | null>(null);
   const [userFolders, setUserFolders] = useState<IFolder[]>([]);
   const [showModalError, setShowModalError] = useState<boolean>(false);
@@ -581,21 +581,25 @@ const Admin = () => {
     const getFolders = async () => {
       setIsLoading(true);
 
-      const response = await getFoldersByUserId(user?._id || '');
-
-      if ('error' in response) {
-        setErrorMessage(response.message);
-        setShowModalError(true);
-        setIsLoading(false);
-
-        return;
+      if (isLoggedIn && user) {
+        const response = await getFoldersByUserId(user?._id);
+  
+        if ('error' in response) {
+          setErrorMessage(response.message);
+          setShowModalError(true);
+          setIsLoading(false);
+  
+          return;
+        }
+  
+        setUserFolders(response?.folders);
       }
 
-      setUserFolders(response?.folders);
       setIsLoading(false);
     };
 
     getFolders();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?._id, isRefresh]);
 
   return (
