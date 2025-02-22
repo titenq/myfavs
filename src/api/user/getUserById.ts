@@ -6,6 +6,7 @@ const getUserById = async (userId: string): Promise<IUserResponse | IGenericErro
   try {
     const response = await fetch(`${backendBaseUrl}/users/username/${userId}`, {
       method: 'GET',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json; charset=utf-8'
       }
