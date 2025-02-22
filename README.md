@@ -2,9 +2,7 @@
 
 ![](https://img.shields.io/github/stars/titenq/myfavs.svg) ![](https://img.shields.io/github/forks/titenq/myfavs.svg) ![](https://img.shields.io/github/issues/titenq/myfavs.svg) 
 
-<div style="text-align: center;">
-  <img src="https://s3.tebi.io/myfavs/myfavs.png" alt="logo myfavs" />
-</div>
+![myfavs.png](https://s3.tebi.io/myfavs/myfavs.png)
 
 ## salve seus links em um só lugar
 #### organize e acesse seus links favoritos facilmente
@@ -12,10 +10,12 @@
 #### mesmo sem se logar, qualquer pessoa pode explorar e visualizar os links públicos
 #### mantenha tudo ao seu alcance com apenas alguns cliques
 
+## site
+[https://myfavs.vercel.app](https://myfavs.vercel.app "https://myfavs.vercel.app")
+
 ## screenshot
-<div style="text-align: center;">
-  <img src="https://s3.tebi.io/myfavs/myfavs-screenshot.png" alt="screenshot myfavs" />
-</div>
+
+![myfavs-screenshot.png](https://s3.tebi.io/myfavs/myfavs-screenshot.png)
 
 ## tecnologias utilizadas
 * TypeScript
